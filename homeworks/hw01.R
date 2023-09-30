@@ -2,7 +2,8 @@
 ## Homework 1
 ## Intro to R Part 1: Getting Started
 ##
-## Type your answer below each prompt
+## Copy-paste this file into a new R script.
+## Then type your answer below each prompt.
 ##################################################
 
 ## Q1. Create a numeric vector called `x` with 1000 numbers. You can use any
