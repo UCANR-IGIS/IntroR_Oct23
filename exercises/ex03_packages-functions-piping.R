@@ -1,25 +1,21 @@
-##################################################
-## ex03.R
-##################################################
+##############################################################
+## EXERCISE 4: Install a package, functions, piping syntax
+#############################################################
 
-##################################################
-## Explore a new package
-##################################################
-
-## First - install the agridat package using the RStudio Packages pane
-## Thne you can proceed
-
-library(agridat)
-
-## Packages have help pages
-
-?agridat
-
-## Look at one of th datasets
+## 1. View the `archbold.apple`  data frame from the agridat package
 
 head(archbold.apple)
 
-summary(archbold.apple)
+## Step 1: install the package using the RStudio Packages pane
+
+## Step 2: load it into memory:
+
+# library(agridat)
+
+## Step 3: View archbold.apple
+
+# head(archbold.apple)
+# View(archbold.apple)
 
 #################################################
 ## Function Practice
@@ -33,43 +29,28 @@ summary(archbold.apple)
 
 ## CHALLENGE 2: Construct a sequence of exactly 500 numbers evenly spaced from 1 to 7. 
 ## Then write another expression which verifies it has 500 numbers.
+## TIP: Ask ChatGPT
 
  
 ## CHALLENGE 3: Simulate 100 rolls of a six-sided dice. View the distribution using a histogram.
+## Tip: Ask ChatGPT
 
+
+## CHALLENGE 4: Find a function that tests if a number is a prime number, and test it.
+## Tip: Ask ChatGPT
 
 
 #################################################
 ## PIPING
 #################################################
 
-# Suppose we wanted to:
-# 
-# 1) generate 500 evenly spaced numbers from 1 to 7
-# 2) round them to two decimal places
-# 3) sum them up
-# 4) take the square root
+# Rewrite the following as a piped expression
 
 x1 <- seq(from = 1, to = 7, length.out = 500)
-x2 <- round(x1, 2) 
+x2 <- round(x1, digits = 2) 
 x3 <- sum(x2)
-x4 <- sqrt(x3)
-x4
 
-# As a single nested expression:
-
-sqrt(sum(round( seq(from = 1, to = 7, length.out = 500), 2)))
-
-# With piping:
-  
-library(magrittr)
-
-seq(from = 1, to = 7, length.out = 500) %>% 
-  round(2) %>% 
-  sum() %>% 
-  sqrt()
-
-## CHALLENGE 4: 
+## CHALLENGE: 
 
 ## There's a built-in dataset (vector) called sunspot.month. It contains the number of 
 ## sunspots from 1750 to the present. To read more about it, type ?sunspot.month
