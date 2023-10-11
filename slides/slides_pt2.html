@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <meta name="author" content=" Andy Lyons October 12, 2022" />
+  <meta name="author" content=" Andy Lyons October 3, 2023" />
   <meta name="copyright" content="<a href='https://ucanr-igis.github.io/IntroR_Oct23/' style='color:#444;'>https://ucanr-igis.github.io/IntroR_Oct23/</a>"/>
   <title>Intro R Functions Import Data</title>
   <style type="text/css">
@@ -166,8 +166,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <h1 class="subtitle">Packages, Functions, Data Frames,<br/> and
 Importing Data</h1>
   <p class="author">
-<img src='images/r_rstudio_400x120.png' style='width:400px; height:120px; margin-top:0.5em; margin-bottom:1em;'/><br/>Andy
-Lyons<br/>October 12, 2022
+<img src='images/packages_200x202.png' style='width:200px; height:202px; margin-top:0.5em; margin-bottom:1em;'/><br/>Andy
+Lyons<br/>October 3, 2023
   </p>
   <p class="date"><a href='https://ucanr-igis.github.io/IntroR_Oct23/' style='color:darkgreen; font-size:105%; font-family:monospace;'>https://ucanr-igis.github.io/IntroR_Oct23/
 </a><br/><img src='images/igis-logo_550x58x256.png' style='margin-top:1.5em;'/></p>
@@ -224,13 +224,14 @@ style="display:block; margin-left:1em;"> <code>hist(x)</code><br/>
 </div>
 <p><br />
 </p>
-</div>
-<div id="warm-up-quiz" class="slide section level1">
-<h1>Warm-Up Quiz</h1>
-<p><br />
-</p>
-<p><img src="images/warmup_720x480.jpg"
-style="display:block; margin:1em auto; border:none;" /></p>
+<!------------------
+# Warm-Up Quiz
+
+\
+
+![](./images/warmup_720x480.jpg){style="display:block; margin:1em auto; border:none;"}
+
+------------------->
 </div>
 <div id="todays-outline" class="slide section level1">
 <h1>Today’s Outline</h1>
@@ -459,42 +460,39 @@ span.inline-code {
 }
 </style>
 <p>With piping, you use the pipe operator <span
-class="inline-code">%&gt;%</span> or <span
-class="inline-code">|&gt;</span> to ‘feed’ the result of one function
+class="inline-code">|&gt;</span> (or <span
+class="inline-code">%&gt;%</span>) to ‘feed’ the result of one function
 into the next function.</p>
 <p>Piping allows the results of one function to be passed as the
 <strong>first argument</strong> of the next function. Hence a series of
 commands to be written like a sentence.</p>
 <h2 id="example">Example</h2>
 <p>Consider the expression:</p>
-<div style='position:relative; border:none; height:346px;width:901px; margin:0 auto; '>
-<img src="images/functions-piping_001.png"/>
+<p style="text-align:center; font-family:Consolas, monospace; font-size:120%;">
+zoo(moo(boo(foo(99)),n=4))
+</p>
+<div style='position:relative; border:none; height:192px;width:797px; margin:0 auto; '>
+<img src="images/functions-piping_001.png" class="incremental stackme"/>
 <img src="images/functions-piping_002.png" class="incremental stackme"/>
 <img src="images/functions-piping_003.png" class="incremental stackme"/>
 <img src="images/functions-piping_004.png" class="incremental stackme"/>
 <img src="images/functions-piping_005.png" class="incremental stackme"/>
-<img src="images/functions-piping_006.png" class="incremental stackme"/>
-</div>
-</div>
-<div id="piping-tips-and-tricks" class="slide section level1">
-<h1>Piping Tips and Tricks</h1>
-<p>The traditional pipe character requires the <em>magrittr</em> or
-<em>dplyr</em> package.</p>
-<div class="indented2 indented2r">
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span></code></pre></div>
 </div>
 <p><br />
 </p>
+</div>
+<div id="piping-tips-and-tricks" class="slide section level1">
+<h1>Piping Tips and Tricks</h1>
 <p>Keyboard shortcut for inserting the pipe operator:
 <code>ctrl + shift + m</code></p>
 <div class="indented2">
 <p>You can tell RStudio which pipe to insert under Global Options
 &gt;&gt; Code</p>
 <div class="indented2">
-<p><span class="inline-code"><code>%&gt;%</code></span> (traditional,
-default)</p>
 <p><span class="inline-code"><code>|&gt;</code></span> (‘native’ pipe
 introduced R4.0)</p>
+<p><span class="inline-code"><code>%&gt;%</code></span> (from
+<code>magrittr</code> package)</p>
 </div>
 </div>
 <p><br />
@@ -502,9 +500,9 @@ introduced R4.0)</p>
 <p>To split a chain of functions across <em>multiple lines</em>, end
 each line with a pipe operator:</p>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="fl">0.1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">log</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">sum</span>() </span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="fl">0.1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">log</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">sum</span>() </span></code></pre></div>
 <pre><code>## [1] 141.4023</code></pre>
 </div>
 <p><br />
@@ -513,17 +511,8 @@ each line with a pipe operator:</p>
 them <em>starting with the 2nd argument</em> (or use named
 arguments):</p>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">runif</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div>
-<pre><code>## [1] 0.24 0.48 0.61 0.86 0.93</code></pre>
-</div>
-<p><br />
-</p>
-<p>Need to pipe to an argument that <em>isn’t the first</em>? Indicate
-where pipe values should go with a dot:</p>
-<div class="indented2 indented2r">
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="do">## gsub() does find-replace on character values:</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;apple&quot;</span>, <span class="st">&quot;banana&quot;</span>, <span class="st">&quot;pear&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">gsub</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;-&quot;</span>, .)</span></code></pre></div>
-<pre><code>## [1] &quot;-pple&quot;  &quot;b-n-n-&quot; &quot;pe-r&quot;</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">runif</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## [1] 1.00 0.55 0.74 0.95 0.15</code></pre>
 </div>
 <p><br />
 </p>
@@ -602,7 +591,7 @@ other name….</h2>
 <h2 id="pulling-out-a-single-column">Pulling out a Single Column</h2>
 <p>To get an individual column, use <code>$</code></p>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">head</span>(trees)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">head</span>(trees)</span></code></pre></div>
 <pre><code>##   Girth Height Volume
 ## 1   8.3     70   10.3
 ## 2   8.6     65   10.3
@@ -610,10 +599,10 @@ other name….</h2>
 ## 4  10.5     72   16.4
 ## 5  10.7     81   18.8
 ## 6  10.8     83   19.7</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>trees<span class="sc">$</span>Height</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>trees<span class="sc">$</span>Height</span></code></pre></div>
 <pre><code>##  [1] 70 65 63 72 81 83 66 75 80 75 79 76 76 69 75 74 85 86 71 64 78 80 74 72 77
 ## [26] 81 82 80 80 80 87</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>trees<span class="sc">$</span>Height <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>trees<span class="sc">$</span>Height <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##      63      72      76      76      80      87</code></pre>
 </div>
@@ -647,7 +636,7 @@ class="slide section level1">
 working directory</strong>.</p>
 <p>Complete path:</p>
 <div class="indented2">
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>my_data <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">&quot;C:/Users/Andy/Documents/LREC/n2_study/plots/plot34a/data/soil_moist.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>my_data <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">&quot;C:/Users/Andy/Documents/LREC/n2_study/plots/plot34a/data/soil_moist.csv&quot;</span>)</span></code></pre></div>
 </div>
 <p><br />
 </p>
@@ -675,7 +664,7 @@ class="slide section level1">
 working directory.</p>
 <p>You can view the current working directory with:</p>
 <div class="indented2">
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">getwd</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">getwd</span>()</span></code></pre></div>
 </div>
 <p><br />
 </p>
@@ -685,7 +674,7 @@ working directory.</p>
 </center>
 <p>…or with code:</p>
 <div class="indented2">
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;D:/Data/DroneData/black_rascal_creek&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;D:/Data/DroneData/black_rascal_creek&quot;</span>)</span></code></pre></div>
 </div>
 <p><br />
 </p>
@@ -693,7 +682,7 @@ working directory.</p>
 <p>When using relative paths, the first <code>'.'</code> represents the
 <strong>working directory</strong>.</p>
 <div class="indented2">
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>my_data <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">&quot;./data/soil_moist.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>my_data <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">&quot;./data/soil_moist.csv&quot;</span>)</span></code></pre></div>
 </div>
 <p><br />
 </p>
@@ -729,17 +718,22 @@ class="slide section level1">
 <li>identify NA values</li>
 </ol>
 </div>
-</div>
-<div id="review-data-frames" class="slide section level1">
-<h1>Review: Data Frames</h1>
-<p>The most common class for storing tabular data in R is the
-<strong>data frame</strong></p>
-<p>View the first few rows of a data frame with
-<strong><code>head()</code></strong></p>
-<p>View an entire data frame with
-<strong><code>View()</code></strong></p>
-<p>Grab an individual column with <strong><code>$</code></strong></p>
+<p><br />
+</p>
 <!------
+I TOOK OUT THIS REVIEW BECAUSE THE EXERCISE ALWAYS GOES TO THE LAST MINUTE
+
+# Review: Data Frames
+
+The most common class for storing tabular data in R is the **data frame**
+
+View the first few rows of a data frame with **`head()`**
+
+View an entire data frame with **`View()`**
+
+Grab an individual column with  **`$`**
+
+
 
 Grab specific rows and columns with <span style='font-weight:bold; font-family:monospace;'>my_df[*rows-expression*, *cols-expression*]</span>
 
