@@ -557,11 +557,13 @@ src="images/sad-face-32x32.png" /> <img
 src="images/sad-face-32x32.png" /></p>
 <p>Best practice: use the package name and the <code>::</code> reference
 to specify which package a function is from.</p>
+<div class="indented2 indented2r">
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> sp<span class="sc">::</span><span class="fu">over</span>()</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>x <span class="ot">&lt;-</span> grDevices<span class="sc">::</span><span class="fu">over</span>()</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>y <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">select</span>()</span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>y <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>()</span></code></pre></div>
+</div>
 <div class="tip">
 <p>When you use the <em><code>package_name::function_name</code></em>
 syntax, you don’t actually have to first load the package with
@@ -578,8 +580,7 @@ whichever package was loaded first.</p>
 duplicate function names, by specifying which one to prioritize <em>no
 matter what order</em> they were loaded.</p>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode r klippy copyme"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(conflicted)</span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(conflicted)</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># Set conflict preference</span></span>
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&quot;filter&quot;</span>, <span class="st">&quot;dplyr&quot;</span>)</span>
@@ -746,8 +747,19 @@ would be:</p>
 </div>
 <div id="stacking-or-merging-data-frames" class="slide section level1">
 <h1>Stacking or Merging Data Frames</h1>
-<p><img src="./images/bind_rows_520x220x256.png"
+<p><img src="images/bind_rows_520x220x256.png"
 style="display:block; margin:0 auto;" /></p>
+<div class="indented2">
+<strong><code>bind_rows(x, y))</code></strong>
+</div>
+<ul>
+<li><p>x and y are data frames</p></li>
+<li><p>they should have the <em>exact</em> same column structure (names,
+order, &amp; class)</p></li>
+<li><p>you can add more than two data frames</p></li>
+</ul>
+<p><br />
+</p>
 <div class="indented2 indented2r">
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>xz_tbl <span class="ot">=</span> x <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>(z)</span></code></pre></div>
 </div>
@@ -771,10 +783,14 @@ href="https://tidyr.tidyverse.org" target="_blank"
 rel="noopener"><tt><strong>tidyr</strong></tt></a></p>
 <p><br />
 </p>
+<div class="centerblock">
 <p><a href="https://rawgit.com/rstudio/cheatsheets/master/tidyr.pdf"
 target="_blank" rel="noopener"><img
 src="images/tidyr_cheatsheet_600x464x256.png"
-style="display:block; margin:1em auto; border:1px solid grey;" /></a></p>
+style="border:1px solid grey;" /></a></p>
+</div>
+<p><br />
+</p>
 </div>
 <div id="pivot-functions" class="slide section level1">
 <h1>Pivot Functions</h1>
@@ -784,6 +800,11 @@ style="display:block; margin:1em auto; border:1px solid grey;" /></a></p>
 <p><em><code>pivot_wider()</code></em><br />
 <img src="images/pivot_wider_674x336x256.png" /></p>
 </div>
+<center>
+More info and examples in the tidyr <a
+href="https://tidyr.tidyverse.org/articles/pivot.html" target="_blank"
+rel="noopener"><strong>Pivoting Vignette</strong></a>
+</center>
 <p><br />
 </p>
 </div>
@@ -793,7 +814,8 @@ style="display:block; margin:1em auto; border:1px solid grey;" /></a></p>
 <tbody>
 <tr>
 <td style="text-align:left;">
-group rows (i.e., change the unit of analysis)
+<strong>Step 1 (optional):</strong><br>group rows (i.e., change the unit
+of analysis)
 </td>
 <td style="text-align:left;font-family: monospace;">
 group_by()
@@ -801,10 +823,10 @@ group_by()
 </tr>
 <tr>
 <td style="text-align:left;">
-compute summary stats for groups of rows
+<strong>Step 2:</strong><br>Compute summaries for each group of rows
 </td>
 <td style="text-align:left;font-family: monospace;">
-summarize() with:<br>n(), mean(), median(), sum(), first(), sd(), IQR(),
+summarize() with:<br>n(), mean(), median(), sum(), sd(), IQR(), first(),
 etc.
 </td>
 </tr>

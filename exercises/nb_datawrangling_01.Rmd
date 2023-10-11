@@ -19,7 +19,7 @@ Here we see a bunch of stuff before the data, the column "names" are unwieldy, t
 You can tackle many of these issues when you import the data. First, we construct the file name and verify it exists:
 
 ```{r chunk01}
-reg_list_fn = "./data/SurveyResults_36100.xlsx"
+reg_list_fn <- "./data/SurveyResults_36100.xlsx"
 file.exists(reg_list_fn)
 ```
 
@@ -29,7 +29,7 @@ To import Excel files, we'll go to `read_xlsx()` from the *readxl* package. This
 
 ```{r chunk02}
 library(readxl)
-reg_list_tbl = read_xlsx(path = reg_list_fn, 
+reg_list_tbl <- read_xlsx(path = reg_list_fn, 
                          sheet = "Survey Output", 
                          skip = 3, 
                          col_names = c("user", "reg_date", "fname", "lname", 
@@ -102,7 +102,6 @@ glimpse(penguins)
 Suppose we want to compare how bill length and flipper length look for each species. We could start by selecting just those columns:
 
 ```{r chunk07}
-library(dplyr)
 penguins |> 
   select(species, bill_length_mm, flipper_length_mm) |> 
   head()

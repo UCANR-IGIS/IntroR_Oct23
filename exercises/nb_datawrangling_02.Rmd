@@ -6,7 +6,6 @@ output:
     toc_float: yes
 ---
 
-
 # Load Packages 
 
 ```{r chunk01}
@@ -105,9 +104,6 @@ genetics_tbl
 We can join these columns to the Palmer Penguins dataset:
 
 ```{r chunk08}
-library(palmerpenguins)
-library(dplyr)
-
 penguins |>
   left_join(genetics_tbl, by = "species") |> 
   head()
@@ -119,7 +115,7 @@ We begin by importing the January 2050 projected daily minimum and maximum tempe
 
 ```{r chunk09}
 sac_temps_tbl <- read_csv("./data/sacramento_daily_temp_jan2050.csv")
-sac_temps_tbl |> head()
+sac_temps_tbl |> arrange(dt) |> slice(1:10)
 ```
 
 \
