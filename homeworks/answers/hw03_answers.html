@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Spatial Analysis with R Part 1: The Basics" />
+<meta name="author" content="Intro to R Part 3: Data Wrangling" />
 
 
 <title>Homework 3 - ANSWERS</title>
@@ -350,7 +350,7 @@ display: none;
 
 
 <h1 class="title toc-ignore">Homework 3 - ANSWERS</h1>
-<h4 class="author">Spatial Analysis with R Part 1: The Basics</h4>
+<h4 class="author">Intro to R Part 3: Data Wrangling</h4>
 
 </div>
 
@@ -371,13 +371,7 @@ font-style:italic;
 <p>First we load some data from the San Francisco Open Data Portal.
 Specifically, we’ll import a selection of 311 calls from San Francisco
 (<a href="https://data.sfgov.org/resource/vw6y-z8j6">more info</a>).</p>
-<pre class="r"><code>## Define a URL to a CSV
-url1 &lt;- &quot;https://data.sfgov.org/resource/vw6y-z8j6.csv?$select=service_request_id,requested_datetime,agency_responsible,service_name,service_subtype,address,neighborhoods_sffind_boundaries,source&amp;$limit=100&amp;$where=requested_datetime between &#39;2023-02-21T00:00:00&#39; and &#39;2023-02-21T23:59:59&#39;&quot;
-
-## Next, read in the data. (URLencode() removes spaces in the URL)
-df &lt;- read.csv(URLencode(url1))
-
-## Finally, change the name of one of the columns
+<pre class="r"><code>## Load packages
 library(dplyr)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
@@ -387,20 +381,36 @@ library(dplyr)</code></pre>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>df &lt;- df |&gt; rename(neighborhood = neighborhoods_sffind_boundaries)</code></pre>
+<pre class="r"><code>library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<pre class="r"><code>## Define a URL to a CSV
+sf311_url &lt;- &quot;https://data.sfgov.org/resource/vw6y-z8j6.csv?$select=service_request_id,requested_datetime,agency_responsible,service_name,service_subtype,address,neighborhoods_sffind_boundaries,source&amp;$limit=50000&amp;$where=requested_datetime between &#39;2023-10-11T00:00:00&#39; and &#39;2023-10-11T23:59:59&#39;&quot;
+
+## Next, read in the data. 
+##  - URLencode() converts spaces in the URL to numeric codes 
+##  - read.csv() imports the CSV file from SF Open Data
+##  - rename() changes the name of one of the columns
+##  - ymd_hms() converts a character column into a date-time column
+sf311_df &lt;- read.csv(URLencode(sf311_url)) |&gt; 
+  rename(neighborhood = neighborhoods_sffind_boundaries) |&gt; 
+  mutate(requested_datetime = ymd_hms(requested_datetime))</code></pre>
 <p><br />
 </p>
-<p>If you’d like, uncomment the following line to view the data frame in
-a View pane:</p>
-<pre class="r"><code># View(df)</code></pre>
+<p>If you’d like, un-comment the following line to view the data frame
+in a View pane:</p>
+<pre class="r"><code># View(sf311_df)</code></pre>
 <p><br />
 </p>
 </div>
-<div id="q1.-how-many-rows-and-how-many-columns-does-this-data-frame-have" class="section level2">
-<h2>Q1. How many rows and how many columns does this data frame
+<div id="q01.-how-many-rows-and-how-many-columns-does-this-data-frame-have" class="section level2">
+<h2>Q01. How many rows and how many columns does this data frame
 have?</h2>
-<pre class="r"><code>dim(df)</code></pre>
-<pre><code>## [1] 100   8</code></pre>
+<pre class="r"><code>dim(sf311_df)</code></pre>
+<pre><code>## [1] 1971    8</code></pre>
 <p><br />
 </p>
 </div>
@@ -409,7 +419,7 @@ have?</h2>
 frame.</h2>
 <p><em>Hint</em>: Look for a function that returns the names of a data
 frame</p>
-<pre class="r"><code>names(df)</code></pre>
+<pre class="r"><code>names(sf311_df)</code></pre>
 <pre><code>## [1] &quot;service_request_id&quot; &quot;requested_datetime&quot; &quot;agency_responsible&quot;
 ## [4] &quot;service_name&quot;       &quot;service_subtype&quot;    &quot;address&quot;           
 ## [7] &quot;neighborhood&quot;       &quot;source&quot;</code></pre>
@@ -419,159 +429,199 @@ frame</p>
 <div id="q03.-write-an-expression-that-returns-the-data-frame-sorted-by-the-responsible-agency." class="section level2">
 <h2>Q03. Write an expression that returns the data frame sorted by the
 responsible agency.</h2>
-<pre class="r"><code>df |&gt; arrange(agency_responsible) |&gt; head()</code></pre>
-<pre><code>##   service_request_id      requested_datetime                agency_responsible
-## 1           16453184 2023-02-21T01:50:00.000              311 Supervisor Queue
-## 2           16453187 2023-02-21T01:56:29.000              311 Supervisor Queue
-## 3           16453173 2023-02-21T01:28:18.000       Animal Care and Control - G
-## 4           16453234 2023-02-21T04:24:00.000     Clear Channel - Transit Queue
-## 5           16453200 2023-02-21T02:25:27.000 DPT Abandoned Vehicles Work Queue
-## 6           16453169 2023-02-21T01:18:16.000                     DPW BSM Queue
-##                            service_name                  service_subtype
-## 1        General Request - PUBLIC WORKS              request_for_service
-## 2                          Noise Report                      Noise Issue
-## 3 General Request - ANIMAL CARE CONTROL                        complaint
-## 4                      Damaged Property Damaged Transit_Shelter_Platform
-## 5                     Abandoned Vehicle               Abandoned Vehicles
-## 6                          Noise Report              construction_public
-##                                      address     neighborhood         source
-## 1     2530 ANZA ST, SAN FRANCISCO, CA, 94118   Inner Richmond Mobile/Open311
-## 2    965 SUTTER ST, SAN FRANCISCO, CA, 94109   Lower Nob Hill Mobile/Open311
-## 3     Not associated with a specific address                             Web
-## 4    234 CHURCH ST, SAN FRANCISCO, CA, 94114  Mission Dolores Mobile/Open311
-## 5 1438 FILLMORE ST, SAN FRANCISCO, CA, 94115 Western Addition            Web
-## 6       85 ORA WAY, SAN FRANCISCO, CA, 94131  Diamond Heights Mobile/Open311</code></pre>
+<pre class="r"><code>sf311_df |&gt; arrange(agency_responsible) |&gt; head()</code></pre>
+<pre><code>##   service_request_id  requested_datetime        agency_responsible
+## 1           17408819 2023-10-11 10:22:00 311 Service Request Queue
+## 2           17408897 2023-10-11 10:38:00 311 Service Request Queue
+## 3           17409782 2023-10-11 13:04:25 311 Service Request Queue
+## 4           17409795 2023-10-11 13:07:00 311 Service Request Queue
+## 5           17409892 2023-10-11 13:22:00 311 Service Request Queue
+## 6           17410438 2023-10-11 15:06:18 311 Service Request Queue
+##                                 service_name   service_subtype
+## 1                       311 External Request noise_dog_barking
+## 2                       311 External Request noise_dog_barking
+## 3 General Request - 311CUSTOMERSERVICECENTER             other
+## 4                       311 External Request noise_dog_barking
+## 5                       311 External Request noise_dog_barking
+## 6 General Request - 311CUSTOMERSERVICECENTER         complaint
+##                                       address neighborhood source
+## 1      243 VIDAL DR, SAN FRANCISCO, CA, 94132   Parkmerced  Phone
+## 2 643 DIVISADERO ST, SAN FRANCISCO, CA, 94117    Panhandle  Phone
+## 3      Not associated with a specific address                 Web
+## 4   530 STOCKTON ST, SAN FRANCISCO, CA, 94108    Chinatown  Phone
+## 5     351 FAXON AVE, SAN FRANCISCO, CA, 94112    Ingleside  Phone
+## 6      Not associated with a specific address                 Web</code></pre>
 <p><br />
 </p>
 </div>
 <div id="q04.-write-an-expression-that-just-returns-three-of-columns-of-your-choice." class="section level2">
 <h2>Q04. Write an expression that just returns three of columns (of your
 choice).</h2>
-<pre class="r"><code>df |&gt; select(service_name, service_subtype, source) |&gt; head()</code></pre>
-<pre><code>##                   service_name              service_subtype            source
-## 1 Street and Sidewalk Cleaning City_garbage_can_overflowing    Mobile/Open311
-## 2          Parking Enforcement        Other_Illegal_Parking             Phone
-## 3 Street and Sidewalk Cleaning                  Bulky Items Integrated Agency
-## 4 Street and Sidewalk Cleaning City_garbage_can_overflowing    Mobile/Open311
-## 5 Street and Sidewalk Cleaning City_garbage_can_overflowing    Mobile/Open311
-## 6 Street and Sidewalk Cleaning City_garbage_can_overflowing    Mobile/Open311</code></pre>
+<pre class="r"><code>sf311_df |&gt; select(service_name, service_subtype, source) |&gt; head()</code></pre>
+<pre><code>##                   service_name              service_subtype         source
+## 1 Street and Sidewalk Cleaning City_garbage_can_overflowing Mobile/Open311
+## 2                 Noise Report garbage_recycling_collection Mobile/Open311
+## 3 Street and Sidewalk Cleaning City_garbage_can_overflowing Mobile/Open311
+## 4                 Noise Report        other_excessive_noise          Phone
+## 5 Street and Sidewalk Cleaning City_garbage_can_overflowing Mobile/Open311
+## 6 Street and Sidewalk Cleaning City_garbage_can_overflowing Mobile/Open311</code></pre>
 <p><br />
 </p>
 </div>
-<div id="q05.-write-an-expression-that-just-returns-311-calls-that-were-submitted-by-phone." class="section level2">
-<h2>Q05. Write an expression that just returns 311 calls that were
+<div id="q05.-write-an-expression-that-returns-the-range-of-the-requested-date-time." class="section level2">
+<h2>Q05. Write an expression that returns the range of the requested
+date &amp; time.</h2>
+<pre class="r"><code>sf311_df |&gt; pull(requested_datetime) |&gt; range()</code></pre>
+<pre><code>## [1] &quot;2023-10-11 00:24:00 UTC&quot; &quot;2023-10-11 23:59:47 UTC&quot;</code></pre>
+<p><br />
+</p>
+</div>
+<div id="q06.-write-an-expression-that-just-returns-311-calls-that-were-submitted-by-phone." class="section level2">
+<h2>Q06. Write an expression that just returns 311 calls that were
 submitted by phone.</h2>
-<pre class="r"><code>df |&gt; filter(source == &#39;Phone&#39;) |&gt; head()</code></pre>
-<pre><code>##   service_request_id      requested_datetime              agency_responsible
-## 1           16453130 2023-02-21T00:18:00.000 SFMTA - Parking Enforcement - G
-## 2           16453139 2023-02-21T00:33:00.000    Muni Feedback Received Queue
-## 3           16453160 2023-02-21T01:03:00.000                   DPW Ops Queue
-## 4           16453202 2023-02-21T02:29:00.000    Muni Feedback Received Queue
-## 5           16453242 2023-02-21T04:42:00.000                      HSOC Queue
-## 6           16453262 2023-02-21T05:32:00.000    Muni Feedback Received Queue
-##             service_name                              service_subtype
-## 1    Parking Enforcement                        Other_Illegal_Parking
-## 2 Muni Employee Feedback                                Muni - Praise
-## 3         Street Defects                              Pavement_Defect
-## 4 Muni Employee Feedback Muni - Complaint_Pass_Ups_Denial_Inattention
-## 5            Encampments                           Encampment Reports
-## 6  Muni Service Feedback       Muni - Complaint_Frequency_Reliability
-##                                         address      neighborhood source
-## 1      1499 SUTTER ST, SAN FRANCISCO, CA, 94109    Cathedral Hill  Phone
-## 2        Not associated with a specific address                    Phone
-## 3       Intersection of MARKET ST and KEARNY ST   South of Market  Phone
-## 4         Intersection of BEACH ST and JONES ST Fisherman&#39;s Wharf  Phone
-## 5 Intersection of ALEMANY BLVD and SAN JOSE AVE     Outer Mission  Phone
-## 6          Intersection of 7TH ST and MARKET ST      Civic Center  Phone</code></pre>
+<pre class="r"><code>sf311_df |&gt; filter(source == &#39;Phone&#39;) |&gt; head()</code></pre>
+<pre><code>##   service_request_id  requested_datetime              agency_responsible
+## 1           17407515 2023-10-11 00:52:00              Noise Report Queue
+## 2           17407648 2023-10-11 05:38:00 SFMTA - Parking Enforcement - G
+## 3           17407661 2023-10-11 05:52:00                   RPD GGP Queue
+## 4           17407671 2023-10-11 06:03:00                DPT Signal Queue
+## 5           17407681 2023-10-11 06:17:00            Tenderloin CBD Queue
+## 6           17407697 2023-10-11 06:31:00                   PUC Sewer Ops
+##                   service_name               service_subtype
+## 1                 Noise Report         other_excessive_noise
+## 2        General Request - MTA           request_for_service
+## 3        Rec and Park Requests Park - Structural_Maintenance
+## 4             Damaged Property        Damaged Traffic_Signal
+## 5 Street and Sidewalk Cleaning              General Cleaning
+## 6                 Sewer Issues                Sewage_back_up
+##                                                         address
+## 1                      158 ALPINE TER, SAN FRANCISCO, CA, 94117
+## 2          626 MISSION BAY BLVD NORTH, SAN FRANCISCO, CA, 94158
+## 3 GGP Stow Lake and Strawberry Hill, , SAN FRANCISCO, CA, 94122
+## 4                     1836 GEARY BLVD, SAN FRANCISCO, CA, 94115
+## 5                  424 LEAVENWORTH ST, SAN FRANCISCO, CA, 94102
+## 6                    132 BRODERICK ST, SAN FRANCISCO, CA, 94117
+##            neighborhood source
+## 1           Buena Vista  Phone
+## 2           Mission Bay  Phone
+## 3      Golden Gate Park  Phone
+## 4 Lower Pacific Heights  Phone
+## 5            Tenderloin  Phone
+## 6           Buena Vista  Phone</code></pre>
 <p><br />
 </p>
 </div>
-<div id="q06.-how-many-311-calls-were-submitted-by-phone" class="section level2">
-<h2>Q06. How many 311 calls were submitted by phone?</h2>
-<pre class="r"><code>df |&gt; filter(source == &#39;Phone&#39;) |&gt; nrow()</code></pre>
-<pre><code>## [1] 6</code></pre>
+<div id="q07.-how-many-311-calls-were-submitted-by-phone" class="section level2">
+<h2>Q07. How many 311 calls were submitted by phone?</h2>
+<pre class="r"><code>sf311_df |&gt; filter(source == &#39;Phone&#39;) |&gt; nrow()</code></pre>
+<pre><code>## [1] 310</code></pre>
 <p><br />
 </p>
 </div>
-<div id="q07.-write-an-expression-that-returns-the-number-of-calls-per-neighborhood-sorted-alphabetically-by-neighborhood." class="section level2">
-<h2>Q07. Write an expression that returns the number of calls per
+<div id="q08.-write-an-expression-the-returns-complaints-about-barking-dogs-made-by-phone." class="section level2">
+<h2>Q08. Write an expression the returns complaints about barking dogs
+made by phone.</h2>
+<p><em>Hint</em>: Look at the service_subtype column.</p>
+<pre class="r"><code>sf311_df |&gt; filter(source == &#39;Phone&#39;, service_subtype == &#39;noise_dog_barking&#39;)</code></pre>
+<pre><code>##   service_request_id  requested_datetime        agency_responsible
+## 1           17408819 2023-10-11 10:22:00 311 Service Request Queue
+## 2           17408897 2023-10-11 10:38:00 311 Service Request Queue
+## 3           17409795 2023-10-11 13:07:00 311 Service Request Queue
+## 4           17409892 2023-10-11 13:22:00 311 Service Request Queue
+## 5           17410510 2023-10-11 15:20:00 311 Service Request Queue
+##           service_name   service_subtype
+## 1 311 External Request noise_dog_barking
+## 2 311 External Request noise_dog_barking
+## 3 311 External Request noise_dog_barking
+## 4 311 External Request noise_dog_barking
+## 5 311 External Request noise_dog_barking
+##                                       address neighborhood source
+## 1      243 VIDAL DR, SAN FRANCISCO, CA, 94132   Parkmerced  Phone
+## 2 643 DIVISADERO ST, SAN FRANCISCO, CA, 94117    Panhandle  Phone
+## 3   530 STOCKTON ST, SAN FRANCISCO, CA, 94108    Chinatown  Phone
+## 4     351 FAXON AVE, SAN FRANCISCO, CA, 94112    Ingleside  Phone
+## 5  1341 VALENCIA ST, SAN FRANCISCO, CA, 94110      Mission  Phone</code></pre>
+<p><br />
+</p>
+</div>
+<div id="q09.-write-an-expression-that-returns-the-number-of-calls-per-neighborhood-sorted-alphabetically-by-neighborhood." class="section level2">
+<h2>Q09. Write an expression that returns the number of calls per
 neighborhood, sorted <em>alphabetically by neighborhood</em>.</h2>
-<pre class="r"><code>df |&gt; group_by(neighborhood) |&gt; summarise(num_calls = n()) |&gt; arrange(neighborhood)</code></pre>
-<pre><code>## # A tibble: 44 × 2
-##    neighborhood     num_calls
-##    &lt;chr&gt;                &lt;int&gt;
-##  1 &quot;&quot;                       2
-##  2 &quot;Alamo Square&quot;           1
-##  3 &quot;Anza Vista&quot;             1
-##  4 &quot;Bernal Heights&quot;         2
-##  5 &quot;Castro&quot;                 1
-##  6 &quot;Cathedral Hill&quot;        11
-##  7 &quot;Cayuga&quot;                 2
-##  8 &quot;Chinatown&quot;              4
-##  9 &quot;Civic Center&quot;           2
-## 10 &quot;Crocker Amazon&quot;         2
-## # … with 34 more rows</code></pre>
+<pre class="r"><code>sf311_df |&gt; group_by(neighborhood) |&gt; summarise(num_calls = n()) |&gt; arrange(neighborhood)</code></pre>
+<pre><code>## # A tibble: 105 × 2
+##    neighborhood               num_calls
+##    &lt;chr&gt;                          &lt;int&gt;
+##  1 &quot;&quot;                                15
+##  2 &quot;Alamo Square&quot;                    10
+##  3 &quot;Anza Vista&quot;                       7
+##  4 &quot;Apparel City&quot;                     4
+##  5 &quot;Aquatic Park / Ft. Mason&quot;         5
+##  6 &quot;Ashbury Heights&quot;                  4
+##  7 &quot;Balboa Terrace&quot;                   1
+##  8 &quot;Bayview&quot;                         22
+##  9 &quot;Bernal Heights&quot;                  68
+## 10 &quot;Bret Harte&quot;                       8
+## # ℹ 95 more rows</code></pre>
 <p><br />
 </p>
 </div>
-<div id="q08.-write-an-expression-that-returns-the-number-of-calls-per-neighborhood-sorted-by-the-number-of-calls." class="section level2">
-<h2>Q08. Write an expression that returns the number of calls per
+<div id="q10.-write-an-expression-that-returns-the-number-of-calls-per-neighborhood-sorted-by-the-number-of-calls." class="section level2">
+<h2>Q10. Write an expression that returns the number of calls per
 neighborhood, sorted by the <em>number of calls</em>.</h2>
-<pre class="r"><code>df |&gt; group_by(neighborhood) |&gt; summarise(num_calls = n()) |&gt; arrange(desc(num_calls)) </code></pre>
-<pre><code>## # A tibble: 44 × 2
-##    neighborhood            num_calls
-##    &lt;chr&gt;                       &lt;int&gt;
-##  1 Cathedral Hill                 11
-##  2 Lower Nob Hill                  6
-##  3 Inner Richmond                  5
-##  4 Mission                         5
-##  5 Tenderloin                      5
-##  6 Chinatown                       4
-##  7 Downtown / Union Square         3
-##  8 Financial District              3
-##  9 Fisherman&#39;s Wharf               3
-## 10 Inner Sunset                    3
-## # … with 34 more rows</code></pre>
+<pre class="r"><code>sf311_df |&gt; group_by(neighborhood) |&gt; summarise(num_calls = n()) |&gt; arrange(desc(num_calls)) </code></pre>
+<pre><code>## # A tibble: 105 × 2
+##    neighborhood    num_calls
+##    &lt;chr&gt;               &lt;int&gt;
+##  1 Mission               236
+##  2 South of Market       130
+##  3 Inner Sunset           83
+##  4 Outer Sunset           81
+##  5 Bernal Heights         68
+##  6 Haight Ashbury         62
+##  7 Tenderloin             57
+##  8 Lower Nob Hill         55
+##  9 Outer Richmond         44
+## 10 Inner Richmond         43
+## # ℹ 95 more rows</code></pre>
 <p><br />
 </p>
 </div>
-<div id="q09.-what-is-the-most-common-service-requested" class="section level2">
-<h2>Q09. What is the most common service requested?</h2>
-<pre class="r"><code>df |&gt; group_by(service_name) |&gt; summarize(num_recs = n()) |&gt; arrange(desc(num_recs))</code></pre>
-<pre><code>## # A tibble: 11 × 2
-##    service_name                          num_recs
-##    &lt;chr&gt;                                    &lt;int&gt;
-##  1 Street and Sidewalk Cleaning                74
-##  2 Encampments                                 10
-##  3 Parking Enforcement                          4
-##  4 Noise Report                                 3
-##  5 Muni Employee Feedback                       2
-##  6 Muni Service Feedback                        2
-##  7 Abandoned Vehicle                            1
-##  8 Damaged Property                             1
-##  9 General Request - ANIMAL CARE CONTROL        1
-## 10 General Request - PUBLIC WORKS               1
-## 11 Street Defects                               1</code></pre>
+<div id="q11.-what-is-the-most-common-service-requested" class="section level2">
+<h2>Q11. What is the most common service requested?</h2>
+<pre class="r"><code>sf311_df |&gt; group_by(service_name) |&gt; summarize(num_recs = n()) |&gt; arrange(desc(num_recs))</code></pre>
+<pre><code>## # A tibble: 34 × 2
+##    service_name                   num_recs
+##    &lt;chr&gt;                             &lt;int&gt;
+##  1 Street and Sidewalk Cleaning       1152
+##  2 Graffiti                            309
+##  3 General Request - PUBLIC WORKS       69
+##  4 Illegal Postings                     48
+##  5 Abandoned Vehicle                    44
+##  6 General Request - MTA                38
+##  7 Litter Receptacles                   32
+##  8 Sidewalk or Curb                     31
+##  9 Sewer Issues                         30
+## 10 Tree Maintenance                     28
+## # ℹ 24 more rows</code></pre>
 <p>Or:</p>
-<pre class="r"><code>df |&gt; group_by(service_name) |&gt; summarize(num_recs = n()) |&gt; slice_max(num_recs, n = 1)</code></pre>
+<pre class="r"><code>sf311_df |&gt; group_by(service_name) |&gt; summarize(num_recs = n()) |&gt; slice_max(num_recs, n = 1)</code></pre>
 <pre><code>## # A tibble: 1 × 2
 ##   service_name                 num_recs
 ##   &lt;chr&gt;                           &lt;int&gt;
-## 1 Street and Sidewalk Cleaning       74</code></pre>
+## 1 Street and Sidewalk Cleaning     1152</code></pre>
 <p><br />
 </p>
 </div>
-<div id="q10.-what-is-the-least-common-service-requested" class="section level2">
-<h2>Q10. What is the least common service requested?</h2>
-<pre class="r"><code>df |&gt; group_by(service_name) |&gt; summarize(num_recs = n()) |&gt; slice_min(num_recs, n = 1)</code></pre>
-<pre><code>## # A tibble: 5 × 2
-##   service_name                          num_recs
-##   &lt;chr&gt;                                    &lt;int&gt;
-## 1 Abandoned Vehicle                            1
-## 2 Damaged Property                             1
-## 3 General Request - ANIMAL CARE CONTROL        1
-## 4 General Request - PUBLIC WORKS               1
-## 5 Street Defects                               1</code></pre>
+<div id="q12.-what-is-the-least-common-service-requested" class="section level2">
+<h2>Q12. What is the least common service requested?</h2>
+<pre class="r"><code>sf311_df |&gt; group_by(service_name) |&gt; summarize(num_recs = n()) |&gt; slice_min(num_recs, n = 1)</code></pre>
+<pre><code>## # A tibble: 4 × 2
+##   service_name                            num_recs
+##   &lt;chr&gt;                                      &lt;int&gt;
+## 1 General Request - ANIMAL CARE CONTROL          1
+## 2 General Request - HUMAN SERVICES AGENCY        1
+## 3 General Request - RISK MANAGEMENT              1
+## 4 General Request - RPD                          1</code></pre>
 </div>
 
 
