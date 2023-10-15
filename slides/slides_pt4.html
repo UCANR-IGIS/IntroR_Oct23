@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content=" Andy Lyons October 18, 2023" />
+  <meta name="copyright" content="<a href='https://ucanr-igis.github.io/IntroR_Oct23/' style='color:#444;'>https://ucanr-igis.github.io/IntroR_Oct23/</a>"/>
+  <title>Intro R Pt4</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+            pre > code.sourceCode { white-space: pre; position: relative; }
+            pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+            pre > code.sourceCode > span:empty { height: 1.2em; }
+            .sourceCode { overflow: visible; }
+            code.sourceCode > span { color: inherit; text-decoration: inherit; }
+            div.sourceCode { margin: 1em 0; }
+            pre.sourceCode { margin: 0; }
+            @media screen {
+            div.sourceCode { overflow: auto; }
+            }
+            @media print {
+            pre > code.sourceCode { white-space: pre-wrap; }
+            pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+            }
+            pre.numberSource code
+              { counter-reset: source-line 0; }
+            pre.numberSource code > span
+              { position: relative; left: -4em; counter-increment: source-line; }
+            pre.numberSource code > span > a:first-child::before
+              { content: counter(source-line);
+                position: relative; left: -1em; text-align: right; vertical-align: baseline;
+                border: none; display: inline-block;
+                -webkit-touch-callout: none; -webkit-user-select: none;
+                -khtml-user-select: none; -moz-user-select: none;
+                -ms-user-select: none; user-select: none;
+                padding: 0 4px; width: 4em;
+                color: #aaaaaa;
+              }
+            pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+            div.sourceCode
+              {   }
+            @media screen {
+            pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+            }
+            code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+            code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+            code span.at { color: #7d9029; } /* Attribute */
+            code span.bn { color: #40a070; } /* BaseN */
+            code span.bu { color: #008000; } /* BuiltIn */
+            code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+            code span.ch { color: #4070a0; } /* Char */
+            code span.cn { color: #880000; } /* Constant */
+            code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+            code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+            code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+            code span.dt { color: #902000; } /* DataType */
+            code span.dv { color: #40a070; } /* DecVal */
+            code span.er { color: #ff0000; font-weight: bold; } /* Error */
+            code span.ex { } /* Extension */
+            code span.fl { color: #40a070; } /* Float */
+            code span.fu { color: #06287e; } /* Function */
+            code span.im { color: #008000; font-weight: bold; } /* Import */
+            code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+            code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+            code span.op { color: #666666; } /* Operator */
+            code span.ot { color: #007020; } /* Other */
+            code span.pp { color: #bc7a00; } /* Preprocessor */
+            code span.sc { color: #4070a0; } /* SpecialChar */
+            code span.ss { color: #bb6688; } /* SpecialString */
+            code span.st { color: #4070a0; } /* String */
+            code span.va { color: #19177c; } /* Variable */
+            code span.vs { color: #4070a0; } /* VerbatimString */
+            code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+          </style>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-41HMZ3JJJ6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-41HMZ3JJJ6');
+  </script>
+  <script src="lib/header-attrs-2.23/header-attrs.js"></script>
+  <link href="lib/slidy-2/styles/slidy.css" rel="stylesheet" />
+  <script src="lib/slidy-2/scripts/slidy.js"></script>
+  <script src="lib/slidy_shiny-1/slidy_shiny.js"></script>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+   href="slidy2022.css" />
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Intro to R Part 4:</h1>
+  <h1 class="subtitle">Data Wrangling 2 and ggplot</h1>
+  <p class="author">
+<img src='images/ggplot_600x170x256.png' style='width:600px; height:170px; margin-top:0.5em; margin-bottom:1em;'/><br/>Andy
+Lyons<br/>October 18, 2023
+  </p>
+  <p class="date"><a href='https://ucanr-igis.github.io/IntroR_Oct23/' style='color:darkgreen; font-size:105%; font-family:monospace;'>https://ucanr-igis.github.io/IntroR_Oct23/
+</a><br/><img src='images/igis-logo_550x58x256.png' style='margin-top:2em;'/></p>
+</div>
+<div class="slide section level1">
+
+<p><br />
+</p>
+<p><br />
+</p>
+<p><img src="images/postit_bg-trans_with-note_320x320.png"
+style="display:block; margin:1em auto; border:none;" /></p>
+<script>
+w3c_slidy.mouse_click_enabled = false;
+</script>
+</div>
+<div id="review" class="slide section level1">
+<h1>Review</h1>
+</div>
+<div id="dates-times" class="slide section level1">
+<h1>Dates &amp; Times</h1>
+<h2 id="challenges-of-date-time-data">Challenges of Date &amp; Time
+Data</h2>
+<div class="indented2">
+Often saved as formatted text:<br />
+
+<div class="li-single" style="font-family:monospace;">
+<ul>
+<li>October 5, 2023<br />
+</li>
+<li>5 Oct., 2023<br />
+</li>
+<li>10/05/2023<br />
+</li>
+<li>2023-10-05<br />
+</li>
+</ul>
+</div>
+<p><br />
+</p>
+Date formatting is often regional:
+<div class="li-single" style="font-family:monospace;">
+<ul>
+<li>10-05-2023<br />
+</li>
+<li>05-10-2023</li>
+</ul>
+</div>
+<p><br />
+</p>
+<p>All time values include a time zone, which could be local, UTC, or
+something else:</p>
+<div class="indented2 indented2r">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="do">## Return the time in the local time zone (as recorded in the OS)</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">Sys.time</span>()</span></code></pre></div>
+<pre><code>## [1] &quot;2023-10-14 23:15:28 PDT&quot;</code></pre>
+</div>
+</div>
+<p><br />
+</p>
+</div>
+<div id="dates-times-in-r" class="slide section level1">
+<h1>Dates &amp; Times in R</h1>
+<h2 id="dates">Dates</h2>
+<div class="indented1">
+<p>Date class in R:</p>
+<div class="indented1">
+<p>Dates: <code>Date</code></p>
+</div>
+<div class="indented2 indented2r">
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">Sys.Date</span>()</span></code></pre></div>
+<pre><code>## [1] &quot;2023-10-15&quot;</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">as.Date</span>(<span class="st">&quot;2023-09-25&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2023-09-25&quot;</code></pre>
+</div>
+<p><br />
+</p>
+</div>
+<p><!---- end of heading 2   ---></p>
+<p><br />
+</p>
+<h2 id="time">Time</h2>
+<div class="indented1">
+<div class="indented1">
+<p>Time (+ date): <code>POSIXct</code>, <code>POSIXlt</code></p>
+</div>
+<div class="indented2">
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">Sys.time</span>()</span></code></pre></div>
+<pre><code>## [1] &quot;2023-10-15 07:22:48 PDT&quot;</code></pre>
+</div>
+<p><br />
+</p>
+</div>
+<h2 id="supported-date-time-operations">Supported Date Time
+Operations</h2>
+<div class="li-single">
+<ul>
+<li>formatting as text<br />
+</li>
+<li>extracting date parts<br />
+</li>
+<li>time zones<br />
+</li>
+<li>leap years<br />
+</li>
+<li>date-time math<br />
+</li>
+<li>Julian numbers<br />
+</li>
+<li>intervals<br />
+</li>
+<li>etc.</li>
+</ul>
+</div>
+</div>
+<div id="importing-and-exporting-date-times"
+class="slide section level1">
+<h1>Importing and Exporting Date-Times</h1>
+<div class="centerblock">
+<p><a href="https://rstudio.github.io/cheatsheets/lubridate.pdf"
+target="_blank" rel="noopener"><img
+src="images/lubridate-cheatsheet_600x464x256.png"
+style="border:1px solid grey;" /></a></p>
+</div>
+<p><br />
+</p>
+<h2 id="converting-text-to-date-times">Converting Text to
+Date-Times</h2>
+<div class="indented1">
+<p>Functions from <code>lubridate</code>:</p>
+<div class="indented2" style="font-family:monospace;">
+<p>ymd_hms(), ymd_hm(), ymd_h()<br />
+ydm_hms(), ydm_hm(), ydm_h()<br />
+mdy_hms(), mdy_hm(), mdy_h()<br />
+dmy_hms(), dmy_hm(), dmy_h()</p>
+</div>
+<p>Examples:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">ymd_hms</span>(<span class="st">&quot;2017-11-28T14:02:00&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2017-11-28 14:02:00 UTC&quot;</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">ymd_hms</span>(<span class="st">&quot;2017-11-28T14:02:00&quot;</span>, <span class="at">tz =</span> <span class="st">&quot;America/Los_Angeles&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2017-11-28 14:02:00 PST&quot;</code></pre>
+</div>
+<p><br />
+</p>
+<div class="tip">
+<p><strong>Pro Tips:</strong></p>
+<p>To see the accepted time zone names, run
+<code>OlsonNames()</code></p>
+<p>Don’t name an object <code>date</code></p>
+</div>
+<p><br />
+</p>
+<h2 id="saving-date-times-in-tabular-data-files">Saving Date-Times in
+Tabular Data Files</h2>
+<p>Recommendations:</p>
+<ol style="list-style-type: decimal">
+<li>Use a format that supports and enforces field / column types</li>
+</ol>
+<p>R, any database format (sqlite, PostGres), Stata, SAS, SPSS</p>
+<ol start="2" style="list-style-type: decimal">
+<li>For text (including csv) or Excel, save date-times as character
+fields using unambiguous format:</li>
+</ol>
+<p>dates: <code>yyyy-mm-dd</code></p>
+<p>date-times: <a href="https://en.wikipedia.org/wiki/ISO_8601"
+target="_blank" rel="noopener">ISO 8601</a></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>mydata_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">temp_dt =</span> <span class="fu">Sys.time</span>() <span class="sc">-</span> (<span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>) <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> <span class="dv">24</span> <span class="sc">+</span> <span class="fu">runif</span>(<span class="dv">3</span>, <span class="at">min=</span><span class="dv">0</span>, <span class="at">max=</span><span class="dv">86400</span>),</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>                      <span class="at">temp_val =</span> <span class="fu">sample</span>(<span class="dv">70</span><span class="sc">:</span><span class="dv">90</span>, <span class="dv">3</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temp_date =</span> <span class="fu">date</span>(temp_dt)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="fu">relocate</span>(temp_date, temp_dt, temp_val)</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>mydata_df</span></code></pre></div>
+<pre><code>##    temp_date             temp_dt temp_val
+## 1 2023-10-13 2023-10-13 03:05:02       88
+## 2 2023-10-14 2023-10-14 05:10:23       71
+## 3 2023-10-14 2023-10-14 14:40:12       82</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>mydata_4csv <span class="ot">&lt;-</span> mydata_df <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_chr =</span> <span class="fu">format</span>(temp_date, <span class="st">&quot;%Y-%m-%d&quot;</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>         <span class="at">time_chr =</span> <span class="fu">format_ISO8601</span>(temp_dt, <span class="at">usetz =</span> <span class="cn">TRUE</span>)) </span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>mydata_4csv</span></code></pre></div>
+<pre><code>##    temp_date             temp_dt temp_val   date_chr                 time_chr
+## 1 2023-10-13 2023-10-13 03:05:02       88 2023-10-13 2023-10-13T03:05:02-0700
+## 2 2023-10-14 2023-10-14 05:10:23       71 2023-10-14 2023-10-14T05:10:23-0700
+## 3 2023-10-14 2023-10-14 14:40:12       82 2023-10-14 2023-10-14T14:40:12-0700</code></pre>
+<p><br />
+</p>
+</div>
+<div id="ggplot-101" class="slide section level1">
+<h1>ggplot 101</h1>
+<h2 id="example">Example</h2>
+<p>Load Palmer Penguins data frame:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="fu">head</span>(penguins)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 8
+##   species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+##   &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
+## 1 Adelie  Torgersen           39.1          18.7               181        3750
+## 2 Adelie  Torgersen           39.5          17.4               186        3800
+## 3 Adelie  Torgersen           40.3          18                 195        3250
+## 4 Adelie  Torgersen           NA            NA                  NA          NA
+## 5 Adelie  Torgersen           36.7          19.3               193        3450
+## 6 Adelie  Torgersen           39.3          20.6               190        3650
+## # ℹ 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+<p><br />
+</p>
+<p>Use ggplot to make a scatter plot:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> bill_length_mm, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Bill Length vs Flipper Length for 3 Species of Penguins&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
+<p><img src="slides_pt4_files/figure-slidy/ggplot_demo-1.png" width="768" /></p>
+</div>
+<div id="anatomy-of-a-ggplot" class="slide section level1">
+<h1>Anatomy of a ggplot</h1>
+<div style='position:relative; border:none; height:592px;'>
+<img src="images/ggplot_anatomy_001.png"/>
+<img src="images/ggplot_anatomy_002.png" class="incremental stackme"/>
+<img src="images/ggplot_anatomy_003.png" class="incremental stackme"/>
+<img src="images/ggplot_anatomy_004.png" class="incremental stackme"/>
+<img src="images/ggplot_anatomy_005.png" class="incremental stackme"/>
+<img src="images/ggplot_anatomy_006.png" class="incremental stackme"/>
+<img src="images/ggplot_anatomy_007.png" class="incremental stackme"/>
+</div>
+</div>
+<div id="maping-columns-to-symbology-properties-with-aes"
+class="slide section level1">
+<h1>Maping Columns to Symbology Properties with <code>aes()</code></h1>
+<pre style="font-weight:normal;">
+ggplot(penguins, <strong>aes(x = flipper_length_mm , y = bill_length_mm , color = species)</strong>) +
+  geom_point() +
+  ggtitle("Bill Length vs Flipper Length for 3 Species of Penguins")
+</pre>
+<div class="indented1 singlespace">
+<ul>
+<li><code>aes()</code> sets the default source for each visual property
+(or aesthetic) of the plot layers
+<ul>
+<li>note you don’t need to put column names in quotes<br />
+</li>
+</ul></li>
+<li>some common visual properties:</li>
+</ul>
+<div class="indented2">
+<p><code>x</code> - where it falls along the x-axis<br />
+<code>y</code> - where it falls along the y-axis<br />
+<code>color</code><br />
+<code>fill</code><br />
+<code>size</code></p>
+</div>
+<ul>
+<li>which visual properties are needed depends on the
+<code>geom_xxxx()</code> functions you use<br />
+</li>
+<li>only put in <code>aes()</code> the visual properties you want linked
+to the data</li>
+</ul>
+</div>
+</div>
+<div id="geoms" class="slide section level1">
+<h1>Geoms</h1>
+<div class="indented1">
+<ul>
+<li><p><code>geom_xxxx()</code> functions add layers</p></li>
+<li><p>drawn from the bottom up</p></li>
+<li><p>some common geoms:</p></li>
+</ul>
+<div class="indented2 singlespace" style="font-family:monospace;">
+<ul>
+<li>geom_point()<br />
+</li>
+<li>geom_bar()<br />
+</li>
+<li>geom_boxplot()<br />
+</li>
+<li>geom_histogram()<br />
+</li>
+</ul>
+</div>
+<ul>
+<li>visual properties can be linked to a column in the data frame or
+manually specified</li>
+</ul>
+<div class="indented2" style="font-family:monospace;">
+<p>geom_point(col = pop_size)<br />
+geom_point(col = “red”)</p>
+</div>
+<ul>
+<li><p>visual properties are inherited (from
+<code>aes()</code>)</p></li>
+<li><p>each geom has default color palettes and legend settings</p></li>
+</ul>
+</div>
+<p><br />
+</p>
+<h2 id="example-1">Example:</h2>
+<p>In the example below, note where <code>geom_boxplot()</code> gets its
+visual properties:</p>
+<div class="indented1 singlespace">
+<ul>
+<li><strong>x</strong> and <strong>y</strong> are linked to columns in
+the dataframe and inherited from <code>aes()</code><br />
+</li>
+<li><strong>color</strong>, <strong>fill</strong>, and
+<strong>size</strong> are manually specified</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> species, <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">color =</span> <span class="st">&quot;navy&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>)</span></code></pre></div>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_boxplot()`).</code></pre>
+<p><img src="slides_pt4_files/figure-slidy/ggplot2-1.png" width="768" /></p>
+<p><br />
+</p>
+<h2 id="adding-visual-elements-to-a-plot">Adding visual elements to a
+plot</h2>
+<p><code>geom_xxxx()</code> functions can also be used to add other
+graphic elements:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> species, <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">color =</span> <span class="st">&quot;navy&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">43.9</span>, <span class="at">size=</span><span class="dv">3</span>, <span class="at">color=</span><span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="at">x =</span> <span class="dv">3</span>, <span class="at">y =</span> <span class="dv">58</span>, <span class="at">label =</span> <span class="st">&quot;Gentoo penguins </span><span class="sc">\n</span><span class="st"> are just the best!&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_boxplot()`).</code></pre>
+<p><img src="slides_pt4_files/figure-slidy/ggplot3-1.png" width="768" /></p>
+<p><br />
+</p>
+</div>
+<div id="notebook-exercise" class="slide section level1">
+<h1>Notebook Exercise</h1>
+<p><br />
+</p>
+</div>
+<div id="transforming-values-with-stat-functions"
+class="slide section level1">
+<h1>Transforming Values with Stat Functions</h1>
+<div class="indented1 singlespace">
+<ul>
+<li><p>To draw a layer, in addition to a <code>geom_xxxx()</code>
+function, ggplot needs a <code>stat_xxxx()</code> function</p></li>
+<li><p><code>stat_xxxx()</code> functions apply a <strong>numeric
+transformation</strong> to the data prior to displaying it</p>
+<ul>
+<li>For many visual properties, the default <code>stat_xxxx()</code> is
+simply the identity function</li>
+</ul></li>
+<li><p>Normally, you don’t have to specify the <code>stat_xxxx()</code>
+function — each <code>geom_xxxx()</code> has a default</p></li>
+</ul>
+</div>
+<p><br />
+</p>
+<h2 id="example-2">Example</h2>
+<p>Under the hood, <code>geom_point()</code> applies
+<code>stat_identity()</code> to the <code>x</code> and <code>y</code>
+properties before drawing it:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x=</span>flipper_length_mm , <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code></pre></div>
+<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
+<p><img src="slides_pt4_files/figure-slidy/ggplot_penguins_scatter-1.png" width="768" /></p>
+<p><br />
+</p>
+<p>But <code>geom_smooth()</code> has to apply a smoothing
+transformation to draw the trend line and confidence envelope:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x=</span>flipper_length_mm , <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code></pre></div>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_smooth()`).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
+<p><img src="slides_pt4_files/figure-slidy/ggplot_smooth-1.png" width="768" /></p>
+<p><br />
+</p>
+<div class="tip">
+<p><code>geom_xxxx()</code> and <code>stat_xxxx()</code> are actually
+just wrappers for <code>layer()!</code></p>
+</div>
+<p><br />
+</p>
+</div>
+<div id="working-backwards" class="slide section level1">
+<h1>Working Backwards</h1>
+</div>
+<div id="end" class="slide section level1">
+<h1>End</h1>
+<p>Done!</p>
+</div>
+
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+</body>
+</html>
