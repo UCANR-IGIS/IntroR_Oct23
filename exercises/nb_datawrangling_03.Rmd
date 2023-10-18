@@ -1,0 +1,197 @@
+---
+title: "Data Wrangling Pt 3: Time Series Data and Missing Values"
+output: 
+  html_notebook:
+    toc: yes
+    toc_float: yes
+---
+
+## Load Packages 
+
+```{r chunk01}
+library(dplyr)
+
+# Specify package preferences for filter, count, select, and arrange
+library(conflicted)
+conflict_prefer("filter", "dplyr", quiet = TRUE)
+conflict_prefer("count", "dplyr", quiet = TRUE)
+conflict_prefer("select", "dplyr", quiet = TRUE)
+conflict_prefer("arrange", "dplyr", quiet = TRUE)
+```
+
+\
+
+## Load some weather data from the CIMIS network
+
+```{r chunk02}
+library(googlesheets4)
+arvinedison_url <- "https://docs.google.com/spreadsheets/d/13FR4Mji24KqZmLqK_BiLKew8nN4MbCdh1KpzT54hH4M/"
+
+## Tell R not to authorize with Google (not needed for this public Google Sheet)
+gs4_deauth()
+
+arvinedison_tbl <- read_sheet(arvinedison_url, sheet = "Sheet1")
+
+## View(arvinedison_tbl)
+head(arvinedison_tbl)
+```
+
+**Pro Tip:**
+
+You can download data from the CIMIS network directly into R using the [`cimir`](https://cran.r-project.org/package=cimir) package (Michael Koohafkan).
+
+```
+library(cimir)
+set_key("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+arvinedison_tbl <- cimis_data(targets = 125, start.date = "2023-09-16", end.date = "2023-10-15",
+                               items = "day-air-tmp-max,day-air-tmp-min,day-eto,day-precip")
+```
+
+\
+
+## CHALLENGE #1. Would you consider the CIMIS data to be long or wide? It is tidy?
+
+\
+
+## Create a date column
+
+```{r chunk03}
+library(lubridate)
+arvedsn_dt_tbl <- arvinedison_tbl |> 
+  mutate(Dt = make_date(year = Year, month = Month, day = Day)) |> 
+  relocate(Dt, .after = Day)
+
+## View(arvedsn_dt_tbl)
+head(arvedsn_dt_tbl)
+```
+
+\
+
+## Create a wide version of the table
+
+Guide to pivoting: <https://tidyr.tidyverse.org/articles/pivot.html>
+
+```{r chunk04}
+library(tidyr)
+arvedsn_wide_tbl <- arvedsn_dt_tbl |> 
+  pivot_wider(names_from = Item, values_from = Value, id_cols = c(Station, Dt))
+
+## View(arvedsn_wide_tbl)
+head(arvedsn_wide_tbl)
+```
+
+\
+
+## Fill in Missing Evapotranspiration Values
+
+First, we create a data frame with just Eto:
+
+```{r chunk05}
+arvedsn_et0_tbl <- arvedsn_dt_tbl |> 
+  filter(Item == "DayEto") |> 
+  select(Station, Dt, Item, Value, Unit)
+
+head(arvedsn_et0_tbl)
+```
+
+\
+
+Are there missing values?
+
+```{r chunk06}
+## View(arvedsn_et0_tbl)
+
+summary(arvedsn_et0_tbl)
+```
+
+\
+
+## Fix #1. Replace missing values with the mean or median
+
+Step 1. Decide: mean or median?
+
+```{r chunk07}
+arvedsn_et0_tbl |> pull(Value) |> hist(breaks = 20)
+```
+
+\
+
+Step 2. Compute the median
+
+```{r chunk08}
+value_median <- arvedsn_et0_tbl |> pull(Value) |> median(na.rm = TRUE)
+value_median
+```
+
+\
+
+Step 3. Substitute the median whenever `Value` is NA.
+
+```{r chunk09}
+arvedsn_et0_fix1_tbl <- arvedsn_et0_tbl |> 
+  mutate(Value_Fix1 = if_else(is.na(Value), value_median, Value))
+
+# View(arvedsn_et0_fix1_tbl) 
+```
+
+\
+
+## Fix #2. Interpolate missing values
+
+```{r chunk10}
+library(zoo)
+vals_linear_interpolation <- na.approx(arvedsn_et0_tbl$Value)
+vals_linear_interpolation
+
+# You can also do spline interpolation
+# vals_spline_interpolation <- na.spline(arvedsn_et0_tbl$Value)
+# vals_spline_interpolation
+```
+\
+
+Add the imputed values as a new column with `bind_cols`:
+
+```{r chunk11}
+arvedsn_et0_fix2_tbl <- arvedsn_et0_fix1_tbl |> 
+  bind_cols(Value_Fix2 = vals_linear_interpolation)
+
+# View(arvedsn_et0_fix2_tbl)
+head(arvedsn_et0_fix2_tbl)
+```
+
+\
+
+This is just scratching the surface of dealing with missing values! 
+
+See also: [imputeTS](https://steffenmoritz.github.io/imputeTS/) 
+
+## CHALLENGE #2
+
+There are also some missing values in the Maximum Daily Air Temperature (DayAirTmpMax). 
+
+Decide what would be a reasonable method to deal with these, and implement it.
+
+\
+
+## Resampling data
+
+Bin the Eto values into low, medium, and high:
+
+```{r chunk12}
+arvedsn_et0_fix3_tbl <- arvedsn_et0_fix2_tbl |> 
+  mutate(eto_level = case_when(Value_Fix2 <= 0.14 ~ "low",
+                               Value_Fix2 <= 0.19 ~ "medium",
+                               TRUE ~ "high"))
+
+# View(arvedsn_et0_fix3_tbl)
+head(arvedsn_et0_fix3_tbl)
+```
+
+\
+
+# END!
+
+Save your work to render a HTML file
+
+
+

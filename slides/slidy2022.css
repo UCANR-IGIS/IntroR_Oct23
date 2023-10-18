@@ -109,6 +109,10 @@ div.space_images > p > img {
 .tbl_compact {
   border-collapse: collapse;
 }
+.tbl_compact > tbody {
+  border:1px solid #555;
+}
+
 .tbl_compact td, .tbl_compact th {
   padding: 10px 30px;
   border-bottom:1px solid gray;

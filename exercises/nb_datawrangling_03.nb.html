@@ -11,7 +11,7 @@
 
 
 
-<title>Data Wrangling Pt 2</title>
+<title>Data Wrangling Pt 3: Time Series Data and Missing Values</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -2875,14 +2875,15 @@ border-radius: 0px;
 
 
 
-<h1 class="title toc-ignore">Data Wrangling Pt 2</h1>
+<h1 class="title toc-ignore">Data Wrangling Pt 3: Time Series Data and
+Missing Values</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<div id="load-packages" class="section level1">
-<h1>Load Packages</h1>
+<div id="load-packages" class="section level2">
+<h2>Load Packages</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkcGx5cilcblxuIyBTcGVjaWZ5IHBhY2thZ2UgcHJlZmVyZW5jZXMgZm9yIGZpbHRlciwgY291bnQsIHNlbGVjdCwgYW5kIGFycmFuZ2VcbmxpYnJhcnkoY29uZmxpY3RlZClcbmNvbmZsaWN0X3ByZWZlcihcImZpbHRlclwiLCBcImRwbHlyXCIsIHF1aWV0ID0gVFJVRSlcbmNvbmZsaWN0X3ByZWZlcihcImNvdW50XCIsIFwiZHBseXJcIiwgcXVpZXQgPSBUUlVFKVxuY29uZmxpY3RfcHJlZmVyKFwic2VsZWN0XCIsIFwiZHBseXJcIiwgcXVpZXQgPSBUUlVFKVxuY29uZmxpY3RfcHJlZmVyKFwiYXJyYW5nZVwiLCBcImRwbHlyXCIsIHF1aWV0ID0gVFJVRSlcbmBgYCJ9 -->
@@ -2897,214 +2898,73 @@ conflict_prefer(&quot;arrange&quot;, &quot;dplyr&quot;, quiet = TRUE)</code></pr
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</div>
-<div id="table-summaries" class="section level1">
-<h1>Table Summaries</h1>
-<p>The main dplyr function for creating summaries of data is
-<code>summarise()</code>. The syntax is similar to
-<code>mutate()</code>. Summary columns can use any aggregate function
-from base R or dplyr (see the <a href="https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-transformation.pdf">dplyr
-cheatsheet</a> for a list of functions that are designed to use with
-<code>summarise()</code>).</p>
-<p><br />
-</p>
-<div id="summarise-an-entire-tibble" class="section level2">
-<h2>Summarise an entire tibble</h2>
-<p>Compute the mean of several columns (using the
-<code>na.rm = TRUE</code> to ignore NA values):</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5saWJyYXJ5KHBhbG1lcnBlbmd1aW5zKVxucGVuZ3VpbnMgfD4gXG4gIHN1bW1hcmlzZShiaWxsX2xlbl9tZWFuID0gbWVhbihiaWxsX2xlbmd0aF9tbSwgbmEucm0gPSBUUlVFKSwgXG4gICAgICAgICAgICBiaWxsX2RlcHRoX21lYW4gPSBtZWFuKGJpbGxfZGVwdGhfbW0sIG5hLnJtID0gVFJVRSksIFxuICAgICAgICAgICAgYm9keV9tYXNzX21lYW4gPSBtZWFuKGJvZHlfbWFzc19nLCBuYS5ybSA9IFRSVUUpKVxuYGBgIn0= -->
-<pre class="r"><code>
-library(palmerpenguins)
-penguins |&gt; 
-  summarise(bill_len_mean = mean(bill_length_mm, na.rm = TRUE), 
-            bill_depth_mean = mean(bill_depth_mm, na.rm = TRUE), 
-            body_mass_mean = mean(body_mass_g, na.rm = TRUE))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MSwibmNvbCI6Mywic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyIxIMOXIDMiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCZ3R5aVREbWl1QmlZR0JnWm1CaFptUmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1Wc25Bd0FjU2NIRDl4bmo2MmMwRU9OOVFiVFBQL1cvWmNQNkd6SVB5QmU1MzBBeGl6VXZNVFMwR01nUWcxb0lGZVpNeWMzTGljMUx6NG5OVEUvT2dndnhnd1pUVWdwSU1aR0crcFB5VXl2amN4T0ppaUNpcThaeEYrZVY2TUN0NGdaaXBBVWo4QndKMGR5VG5BSTJBdWdNbXlKV1NXSktvbDFZRTFBL2svVVBUd3A1ZlVKS1pud2ZVeEFRS0NWWTB6WXhGYUFMc3lSbWxlZGtHUmlDRHdjSVF3QXRsTXlLeG1TRldNZjJIR3NFS05ZSXROUzg5TXk4VjV1YWN4S1RVSEZnNEFIMEs5cWhlUVZGbVhnbk1CMERSWXIyUy9KSkVtRHF1NVB3Y21BallUd3ovQUJONzVyVDRBUUFBIn0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["bill_len_mean"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["bill_depth_mean"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["body_mass_mean"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"43.92193","2":"17.15117","3":"4201.754"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[1]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
 <p><br />
 </p>
 </div>
-<div id="summarise-groups-of-rows" class="section level2">
-<h2>Summarise groups of rows</h2>
-<p>Often you want to create summaries for groups of rows (i.e., a
-different unit of analysis).</p>
-<p>If we wanted to compute summary stats for each species, you would
-first group the rows by species with <code>group_by()</code>, and then
-use <code>summarise()</code>.</p>
+<div id="load-some-weather-data-from-the-cimis-network" class="section level2">
+<h2>Load some weather data from the CIMIS network</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGVuZ3VpbnMgfD4gXG4gIGdyb3VwX2J5KHNwZWNpZXMpIHw+IFxuICBzdW1tYXJpc2UoYmlsbF9sZW5fbWVhbiA9IG1lYW4oYmlsbF9sZW5ndGhfbW0sIG5hLnJtID0gVFJVRSksIFxuICAgICAgICAgICAgYmlsbF9kZXB0aF9tZWFuID0gbWVhbihiaWxsX2RlcHRoX21tLCBuYS5ybSA9IFRSVUUpLCBcbiAgICAgICAgICAgIGJvZHlfbWFzc19tZWFuID0gbWVhbihib2R5X21hc3NfZywgbmEucm0gPSBUUlVFKSlcbmBgYCJ9 -->
-<pre class="r"><code>penguins |&gt; 
-  group_by(species) |&gt; 
-  summarise(bill_len_mean = mean(bill_length_mm, na.rm = TRUE), 
-            bill_depth_mean = mean(bill_depth_mm, na.rm = TRUE), 
-            body_mass_mean = mean(body_mass_g, na.rm = TRUE))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6NCwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyIzIMOXIDQiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCbDFTdlU3RE1CQjJtNFFxbFZvUVBBTURTSzJnWFJqRGJ4SHF4SS9VclhJVGw0WTZkcFNZbjI2dzhRSklpS1ZNREZBbU5saDRDQ1I0QUJaZUFCYmFjcW5qaXNaUzRydnY3cjc3OCs1R3JaeXRaUkZDR3RLMUZOSU1FSkZ4c0w5VldFRklUNE9TUWpveW8vc01uT1pBME9IT2pTSWlJMEpwS1U4NFQxRnlRbWdJMG96a2x1aXFRNmhMWXMxY2I3a3NGQUgybGJsQ21PQThRV1hZRkllS2FjemZ4TGJnQVVnRCtQSlJEbXVkVkhldXI1YXQ3YU5uT0M5VzViWDdZZll2eHZaUzdmN3o4bmZUS3JVZjRQU3N3dmQ3MSt2OGpPMjlyNzNadS9tcTliaFlpSTcxOUtZdjNLN2RKTXRoMkNPcUhEMEdNNkZQYkJkZ3FlWWFMcVYxU2xqZEk1akY0UFFJZElndld2L2hmSU03bmJvSExVcDBNcHNaOE5PaXloZ05QWDBPditGdzJKZU8yakF4bUt5REJTNDJBd2lSdzVtZ3kzQmZ1SndCV1RyYXBKRUlUZ1VKSUdPM2psbDdxUndSeDl0R2NTR3ArQVVvV1plcGRGV1FvVFpGMktITDFNNE5paHVFcXRhaHVWRnZSVDl3bVZBZEFCb1dCUmRZK1dWdFRoVWlGejc0QTdUeVY2TzRBZ0FBIn0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["species"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["bill_len_mean"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["bill_depth_mean"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["body_mass_mean"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Adelie","2":"38.79139","3":"18.34636","4":"3700.662"},{"1":"Chinstrap","2":"48.83382","3":"18.42059","4":"3733.088"},{"1":"Gentoo","2":"47.50488","3":"14.98211","4":"5076.016"}],"options":{"columns":{"min":{},"max":[10],"total":[4]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-<p><strong>How many rows per island?</strong></p>
-<p>For this question, we can use the <code>n()</code> function in
-<code>summarise()</code>:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGVuZ3VpbnMgfD4gXG4gIGdyb3VwX2J5KGlzbGFuZCkgfD4gXG4gIHN1bW1hcmlzZShudW1fcmVjb3JkcyA9IG4oKSlcbmBgYCJ9 -->
-<pre class="r"><code>penguins |&gt; 
-  group_by(island) |&gt; 
-  summarise(num_records = n())</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyIzIMOXIDIiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCbDJRejA3RE1BekczVDloYWhFSWllZWdRbUlIem1qaUFkQ1Fka01oelVaRm1reEpCaHc0OERpOEpDdk9FazlhRGttL3o3Vi9zZjIwV04yMXF4WUFLcWlyQWlxR0V0ano4dkhtSHFBdTBSUlFReE8rWDVoMGpRS0QxY1doSXZ3OCtLQlBrcytVL0pES29icUs3Qmg5R0p3d01qbTJzSktQeVRSTFl6ZlNPcWt6RWhPS093SWQ4V3N1dkxHbzluaW9tVjg4MzNqbU9VTHpVUktpSk1UZ0ZOZDljdWQ2Tjc1WUtZenRYVmJkV1BQWkVTRThWZjdnTlUzVFgweXNwcXk1dHVlZWQydUxKYkhCRTl6TWJQMWdOTUxLc0V5V0ZSYzJDOHpFMjA2LzM4NERPQzBjVWlORm1wdDBHWitxcVNGR28wcTlHZlJ4N1lxL1NwWE1KUTUzbUszYjJrRjdtZ0NqcnZQR2M4cHJoVkVVaVV2Zi93T0RyOVpKT3dJQUFBPT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["island"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["num_records"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Biscoe","2":"168"},{"1":"Dream","2":"124"},{"1":"Torgersen","2":"52"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-<p><strong>CHALLENGE #1</strong>: Compute the number of observations per
-year</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgWW91ciBhbnN3ZXIgaGVyZVxuXG5gYGAifQ== -->
-<pre class="r"><code>## Your answer here
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-<p><strong>CHALLENGE #2</strong>: Compute the number of observations per
-year and species?</p>
-<p>Hint: <code>group_by()</code> can take more than one column</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBZb3VyIGFuc3dlciBoZXJlXG5cbmBgYCJ9 -->
-<pre class="r"><code># Your answer here
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-</div>
-</div>
-<div id="join-tables" class="section level1">
-<h1>Join tables</h1>
-<p>Import a dataset with some (fake) genetic information about
-Penguins:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyZWFkcilcbmdlbmV0aWNzX3RibCA8LSByZWFkX2NzdihcIi4vZGF0YS9wZW5ndWluX2dlbmV0aWNfZGl2ZXJzaXR5LmNzdlwiKVxuYGBgIn0= -->
-<pre class="r"><code>library(readr)
-genetics_tbl &lt;- read_csv(&quot;./data/penguin_genetic_diversity.csv&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMyBDb2x1bW5zOiA14pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICgyKTogc3BlY2llcywgcGhvdG9cbmRibCAoMyk6IGhhcGxvdHlwZV9kaXYsIG51Y2xlb3RpZGVfZGl2LCB0YWppbWFfZFxu4oS5IFVzZSBgc3BlYygpYCB0byByZXRyaWV2ZSB0aGUgZnVsbCBjb2x1bW4gc3BlY2lmaWNhdGlvbiBmb3IgdGhpcyBkYXRhLlxu4oS5IFNwZWNpZnkgdGhlIGNvbHVtbiB0eXBlcyBvciBzZXQgYHNob3dfY29sX3R5cGVzID0gRkFMU0VgIHRvIHF1aWV0IHRoaXMgbWVzc2FnZS5cbiJ9 -->
-<pre><code>Rows: 3 Columns: 5── Column specification ───────────────────────────────────────────────────────────────────────────────
-Delimiter: &quot;,&quot;
-chr (2): species, photo
-dbl (3): haplotype_div, nucleotide_div, tajima_d
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2VuZXRpY3NfdGJsXG5gYGAifQ== -->
-<pre class="r"><code>genetics_tbl</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInNwZWNfdGJsX2RmIiwidGJsX2RmIiwidGJsIiwiZGF0YS5mcmFtZSJdLCJucm93IjozLCJuY29sIjo1LCJzdW1tYXJ5Ijp7IkEgdGliYmxlIjpbIjMgw5cgNSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJwMVR6MnNUUVJTZUp0bkVCRk5FL3dVOVNYWmlhckh0WmJHUkZnK2krQU42V3lhN1kzYVMzWmxoZDlhbVVLUmU5Q0FlUk1RL3dGTXZIa1ZFeVA4Z1hzV2pLR2dwM3RRMHZ2MHhJU3k5MklYWmZlLzc1cjN2dlRjN3Q2OXRMVFcyR2dpaE1xcVVGMURaQUJNWjkrNXV0RllRcXBUQVdVQVZWRSsrSTloMExtRmhuY2tpVXFKNjFhVStvN2xYNzNxTVJ5b2tVdE9ibENzaHdGcE1ncXlEN3N0SDFmT2ZyWU96L05Xem0xK3NuOTlHbnlhLzNzNzR2ZDZOajRmN2Y2MTNMOVNId2NQZjF1TW5GMHVucjcvWC9IaVNidDhZZnovYy8vUFZmenArczJ6dC9uanVGWXBpbmxJeVdzTTRscjRncnJuTmhpeWdMaU9tQ1BzNDhXVGlZVWNFZ2VBUlZsNGM5RERGZEFWbjdVakcrekhqcmZZbGN5RDdlS25UbHFQV2NWUXVPRHlSb0lNZEY4OG1adCtpYWVZNXhXTzVYUEwxaVNSWDhlb3l6czVFNTdTSnNydENTQnJhNjJUblFxZHIzeEd4OHV4TkNva2dYVnJPNVE2VTg5OXhoWi9JNENTZ1VYNVdSZzdXSWtrZEJuRG1OajBDL2FnZFNXMlhQY2pCUlI0N1BoV0t1ZlBvS1VVR0xDQzJxOU5MVHloUjBLeUhZdHZVdWsxWXBUMTRUYWZUU2JFNHh5ZVJMazZERFpjb1l0NFBJUjY4bzBKSVRVakZZTGFRZFA1cXpPNU1XQUJxamhmellmdEtramlGczZlWjIrVTUyOGlrU3RQQ3RLb3dlOGIxZFROODBxTytIaEowbWpacXlwQnhwVHNBTkRLVlVFVHZhempDMTBqYUV6cjZCOTR3WnZJSkJBQUEifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["species"],"name":[1],"type":["chr"],"align":["left"]},{"label":["haplotype_div"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["nucleotide_div"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["tajima_d"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["photo"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"Adelie","2":"0.977","3":"0.008","4":"-1.842","5":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Adeliepinguin-01.jpg/320px-Adeliepinguin-01.jpg"},{"1":"Chinstrap","2":"0.971","3":"0.096","4":"-0.842","5":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Chinstrap_Penguin.jpg/320px-Chinstrap_Penguin.jpg"},{"1":"Gentoo","2":"0.966","3":"0.011","4":"-0.059","5":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Gentoo_Penguin_at_Cooper_Bay%2C_South_Georgia.jpg/342px-Gentoo_Penguin_at_Cooper_Bay%2C_South_Georgia.jpg"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-<p>We can join these columns to the Palmer Penguins dataset:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGVuZ3VpbnMgfD5cbiAgbGVmdF9qb2luKGdlbmV0aWNzX3RibCwgYnkgPSBcInNwZWNpZXNcIikgfD4gXG4gIGhlYWQoKVxuYGBgIn0= -->
-<pre class="r"><code>penguins |&gt;
-  left_join(genetics_tbl, by = &quot;species&quot;) |&gt; 
-  head()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MTIsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyAxMiJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJ1MVZ2Mi9UUUJTK3hIRkNRaHVCK0JjUVcrMjJZYWhZY0p1b0V5eW9TR1dLTHZZbHZ2YnNPOW1YTm1HaDdLd01aV1NveEFxQ2dZRWZZb1VGSWNIQzN3Q0lEZEdHZDdiUHRDWklRV0xzU1UvMzNuZjMzcjMzN3Z6NVJtZXoxZGhzSUlRTVZERkt5REJCUmViTmpmV0ZGWVFxWlRCS3FJTHFhaDdCcGd1Z3pJR2NBNmxtQzlWVmp6QksvcE9GalBra3RzcG9xcHhJcXNySURtRnhscEdoMFRVYXUxeEhOanNSd1VGbTFEZDROQ0JSVE1KQ0pOTmxPTmFCOHZCOTdFb2VnWFlFMGxTSTA3NzNGc1k3cC8xS3RRbzVuVXQ5TmU1OFZWYnRvYk4yYXgvR0E2ZDlrT0M1My9LVGxock9VZ0wzbmVYRUhlVityV3RwM012N2lUK0F1aEZQUVo2RHZObExYVjZEdlBpOTNqd0ErUVQzOGpoZG43OE45dHF4UnFabGdtVCtwUlJUNVpjbldjWGx2R0lTWUtaYlYwbjBaS2VoZDA3dlRYWlc3ZU4wU1h0dzlVdjcvdDNxeGMrenpybmZYdS82KzIrUGZzNDZhNytYaDZNUGg5K2ZyYzg2Rng0MjlhVVU4UlhiSGdyR3NXZnQwbTBhRUk5aUM5NlFyU3loTE52bFFjREQySmIrTU9qWnhDWXJkdnFZQlEwSFF4b3VMQzVaVzJKZ3Q1WVh4V2hoMnRMcGdhY0gvdnVCQlFJTGNVQTBnYzFsWUMwV3hLVUFaOThzalJrT3ZjeHE5aWhqWFViQ2dmUzdnV2JJK1FUMWlEZ09udTh6S2dTSi90aDl0c2U5Y1RjQTZ1enFEaGd4R1duK0dCTWM2YmcraG83SXNTQmRqKzdvRk1LaHl3aVgxRHVPbnBGNGl3YTRxeE0xaGM4bEw5UmJqL2l1cFd0VzlGTlc5RGFaVEg3OGhiQWFIcGJZNmtmZ2twTFdpWEExTGlTRkM0RTQ2aWRuRnB4TFVRR291ZjR3M0Y1Y1VZRXpUa1ZaSXFXTWQ3VStseDVWMFFtWitqYWdselRNZjFNTTl3alRmWUhpa3Rvc0VkRlE2Z29BalMzSkpkYjdHaTVuR2ttSitPZ1hYRXArOE5NSEFBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["species"],"name":[1],"type":["chr"],"align":["left"]},{"label":["island"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["bill_length_mm"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["bill_depth_mm"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["flipper_length_mm"],"name":[5],"type":["int"],"align":["right"]},{"label":["body_mass_g"],"name":[6],"type":["int"],"align":["right"]},{"label":["sex"],"name":[7],"type":["fctr"],"align":["left"]},{"label":["year"],"name":[8],"type":["int"],"align":["right"]},{"label":["haplotype_div"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["nucleotide_div"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["tajima_d"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["photo"],"name":[12],"type":["chr"],"align":["left"]}],"data":[{"1":"Adelie","2":"Torgersen","3":"39.1","4":"18.7","5":"181","6":"3750","7":"male","8":"2007","9":"0.977","10":"0.008","11":"-1.842","12":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Adeliepinguin-01.jpg/320px-Adeliepinguin-01.jpg"},{"1":"Adelie","2":"Torgersen","3":"39.5","4":"17.4","5":"186","6":"3800","7":"female","8":"2007","9":"0.977","10":"0.008","11":"-1.842","12":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Adeliepinguin-01.jpg/320px-Adeliepinguin-01.jpg"},{"1":"Adelie","2":"Torgersen","3":"40.3","4":"18.0","5":"195","6":"3250","7":"female","8":"2007","9":"0.977","10":"0.008","11":"-1.842","12":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Adeliepinguin-01.jpg/320px-Adeliepinguin-01.jpg"},{"1":"Adelie","2":"Torgersen","3":"NA","4":"NA","5":"NA","6":"NA","7":"NA","8":"2007","9":"0.977","10":"0.008","11":"-1.842","12":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Adeliepinguin-01.jpg/320px-Adeliepinguin-01.jpg"},{"1":"Adelie","2":"Torgersen","3":"36.7","4":"19.3","5":"193","6":"3450","7":"female","8":"2007","9":"0.977","10":"0.008","11":"-1.842","12":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Adeliepinguin-01.jpg/320px-Adeliepinguin-01.jpg"},{"1":"Adelie","2":"Torgersen","3":"39.3","4":"20.6","5":"190","6":"3650","7":"male","8":"2007","9":"0.977","10":"0.008","11":"-1.842","12":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Adeliepinguin-01.jpg/320px-Adeliepinguin-01.jpg"}],"options":{"columns":{"min":{},"max":[10],"total":[12]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="reshape-data" class="section level1">
-<h1>Reshape Data</h1>
-<p>We begin by importing the January 2050 projected daily minimum and
-maximum temperature for Sacramento:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2FjX3RlbXBzX3RibCA8LSByZWFkX2NzdihcIi4vZGF0YS9zYWNyYW1lbnRvX2RhaWx5X3RlbXBfamFuMjA1MC5jc3ZcIilcbmBgYCJ9 -->
-<pre class="r"><code>sac_temps_tbl &lt;- read_csv(&quot;./data/sacramento_daily_temp_jan2050.csv&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMjQ4IENvbHVtbnM6IDbilIDilIAgQ29sdW1uIHNwZWNpZmljYXRpb24g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG5EZWxpbWl0ZXI6IFwiLFwiXG5jaHIgICg0KTogY2xpbV92YXIsIHBlcmlvZCwgZ2NtLCBzY2VuYXJpb1xuZGJsICAoMSk6IHRlbXBfZlxuZGF0ZSAoMSk6IGR0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
-<pre><code>Rows: 248 Columns: 6── Column specification ───────────────────────────────────────────────────────────────────────────────
-Delimiter: &quot;,&quot;
-chr  (4): clim_var, period, gcm, scenario
-dbl  (1): temp_f
-date (1): dt
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2FjX3RlbXBzX3RibCB8PiBhcnJhbmdlKGR0KSB8PiBzbGljZSgxOjEwKVxuYGBgIn0= -->
-<pre class="r"><code>sac_temps_tbl |&gt; arrange(dt) |&gt; slice(1:10)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInNwZWNfdGJsX2RmIiwidGJsX2RmIiwidGJsIiwiZGF0YS5mcmFtZSJdLCJucm93IjoxMCwibmNvbCI6Niwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyIxMCDDlyA2Il19fSwicmRmIjoiSDRzSUFBQUFBQUFBQmd0eWlURG1pdUJpWUdCZ1ptQmhabVJnWmdVeUdWaERROXgwTFJnWVdKaUFIRVlHRmdaT0VGMEJWQ1FNWkxBQnNRQVFjMEVsMkVvU2kzTXo4NUI1aVJWMGwwTjFFM05LWWlVOW1LaTJjbmtrcHJpNytocnB1Z2JqRk9GdzlndnkxWFgyTmNYQlozZE96SE1OOWpYQ3ptWHo5UXp5ZHpiRnlzTnZPNnBMV1l1U0MweE1CNGJEd013SGNvbkRuVTVRV21PZ2dIWkFwdEdTSzJ0eVRtSnhNZFRiTUVFV2w4U1NWQ0Q5RDRnaGpyQitzZVdoKy9LVERpNFZNMndMSmxvN3VGcTBYZWR5cUhMd1AvVzhZQWxUcUlQRGY0WEYxNjEzT0hoTnl5eFkvRGpUd2Q3dVhOVkR4MlFIOTZ1VGJBdTZlUnhjRmpjWExMNnI3ZUF4TDRqTHRpY2IzUkY1aWJtcE1FZXd3V0k4T1Njek43NHNzUWdXaXdXcFJabjVLYkJrbFo2Y0MxTlluSnlhbHdpVWcvS1pVa3JnaVQ0MXR5QStEYzAyenFMOGNqMllqYndnRFExQTR2Ly8vOThnQ3BuK293VUhWMHBpU2FKZVdoRlFDeVJRVUl4anp5OG95Y3pQQXhyR0JNcjJyR2lhR1l2UUJOaVRNMHJ6c2cwc3dja01KQXdCdkZBMkZ4S2JEV0lWTTh4QnJEQi9wZWFsWithbHdrSXZKekVwTlFmSzRRTjZEdXczdllLaXpEeFlRSEFCUll2MVN2SkxFbUhxdUpMemMyQWlrSWorQndEeStwdTE1UVFBQUE9PSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["clim_var"],"name":[1],"type":["chr"],"align":["left"]},{"label":["period"],"name":[2],"type":["chr"],"align":["left"]},{"label":["gcm"],"name":[3],"type":["chr"],"align":["left"]},{"label":["scenario"],"name":[4],"type":["chr"],"align":["left"]},{"label":["dt"],"name":[5],"type":["date"],"align":["right"]},{"label":["temp_f"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"tasmin","2":"day","3":"HadGEM2-ES","4":"rcp45","5":"2050-01-01","6":"27.90901"},{"1":"tasmax","2":"day","3":"HadGEM2-ES","4":"rcp45","5":"2050-01-01","6":"40.94215"},{"1":"tasmin","2":"day","3":"CNRM-CM5","4":"rcp45","5":"2050-01-01","6":"42.44161"},{"1":"tasmax","2":"day","3":"CNRM-CM5","4":"rcp45","5":"2050-01-01","6":"63.58519"},{"1":"tasmin","2":"day","3":"CanESM2","4":"rcp45","5":"2050-01-01","6":"33.99318"},{"1":"tasmax","2":"day","3":"CanESM2","4":"rcp45","5":"2050-01-01","6":"53.17509"},{"1":"tasmin","2":"day","3":"MIROC5","4":"rcp45","5":"2050-01-01","6":"31.24534"},{"1":"tasmax","2":"day","3":"MIROC5","4":"rcp45","5":"2050-01-01","6":"47.66853"},{"1":"tasmin","2":"day","3":"HadGEM2-ES","4":"rcp45","5":"2050-01-02","6":"41.27745"},{"1":"tasmax","2":"day","3":"HadGEM2-ES","4":"rcp45","5":"2050-01-02","6":"49.23688"}],"options":{"columns":{"min":{},"max":[10],"total":[6]},"rows":{"min":[10],"max":[10],"total":[10]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-<p>Convert from a long to wide format:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5cilcblxuc2FjX3RlbXBzX3RibCB8PiBcbiAgcGl2b3Rfd2lkZXIobmFtZXNfZnJvbSA9IGNsaW1fdmFyLCB2YWx1ZXNfZnJvbSA9IHRlbXBfZikgfD4gXG4gIGhlYWQoKVxuYGBgIn0= -->
-<pre class="r"><code>library(tidyr)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShnb29nbGVzaGVldHM0KVxuYXJ2aW5lZGlzb25fdXJsIDwtIFwiaHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvMTNGUjRNamkyNEtxWm1McUtfQmlMS2V3OG5ONE1iQ2RoMUtwelQ1NGhINE0vXCJcblxuIyMgVGVsbCBSIG5vdCB0byBhdXRob3JpemUgd2l0aCBHb29nbGUgKG5vdCBuZWVkZWQgZm9yIHRoaXMgcHVibGljIEdvb2dsZSBTaGVldClcbmdzNF9kZWF1dGgoKVxuXG5hcnZpbmVkaXNvbl90YmwgPC0gcmVhZF9zaGVldChhcnZpbmVkaXNvbl91cmwsIHNoZWV0ID0gXCJTaGVldDFcIilcbmBgYCJ9 -->
+<pre class="r"><code>library(googlesheets4)
+arvinedison_url &lt;- &quot;https://docs.google.com/spreadsheets/d/13FR4Mji24KqZmLqK_BiLKew8nN4MbCdh1KpzT54hH4M/&quot;
 
-sac_temps_tbl |&gt; 
-  pivot_wider(names_from = clim_var, values_from = temp_f) |&gt; 
-  head()</code></pre>
+## Tell R not to authorize with Google (not needed for this public Google Sheet)
+gs4_deauth()
+
+arvinedison_tbl &lt;- read_sheet(arvinedison_url, sheet = &quot;Sheet1&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6Niwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI2IMOXIDYiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCZ3R5aVREbWl1QmlZR0JnWm1CaFptUmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1aTEFCc1FDWWhrZ3dweVJXa3N0RU5ZbkxJekhGM2RYWFNOYzFtSVlpcUhheUZpVVhtSmhTem1GZzVnT1o2bkNuRXhTQ0RFRGFBVW8zUU9rREVMb0xLdDhGbGtjTFpOYmtuTVRpWXFnVFlZSXNMb2tscVVENkh4QkRMTEYrc2VXaCsvS1REaTZMbXdzVzM5VjJjRTBUdTg3RnorRGd0cS9UdHFEeHFJUHpzNHlDeFFmREhkeml4V3dMTnBqQjlibFV6TEF0bUdqdDRERXZpTXUySjl2QmMwUFI0bXV2blIyODdmSnNDMDQ4ZGZCNnNIUHhkZUV5Qis5UHMyMExwZ1NqT3k0dk1UY1Y1amhZK0xFVnBCWmw1cWZBSWpVOU9SZks1Q2hPVHMxTEJNcEIrVXdwSlRBdEpZbkZ1Wmw1eUx6RUNqUzdPSXZ5eS9WZzl2R0N0SU9DOGYvLy83OGdDcG4rb3dVU1YwcGlTYUplV2hGUUN5U29VSXhqenk4b3ljelBBeHJHQkVyQ3JHaWFHWXZRQk5pVE0wcnpzZzBOUUFhRGhTR0FGOHBtUTJXRHJHS0dPWWdWNXEvVXZQVE12RlJZMk9Va0pxWG1RRGw4UU0rQi9hWlhVSlNaQndzV0xxQm9zVjVKZmtraVRCMVhjbjRPVEFRUy9mOEFyQkFpbWJFREFBQT0ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoi4pyUIFJlYWRpbmcgZnJvbSBBcnZpbi1FZGlzb24gQ0lNSVMgRGF0YSBTZXAtMjAyMy5cbuKclCBSYW5nZSAnJ1NoZWV0MScnLlxuIn0= -->
+<pre><code>✔ Reading from Arvin-Edison CIMIS Data Sep-2023.
+✔ Range &#39;&#39;Sheet1&#39;&#39;.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgVmlldyhhcnZpbmVkaXNvbl90YmwpXG5oZWFkKGFydmluZWRpc29uX3RibClcbmBgYCJ9 -->
+<pre class="r"><code>## View(arvinedison_tbl)
+head(arvinedison_tbl)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MTUsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyAxNSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJyMVV3VzRUTVJCMXN1dUVyR2lEVkw2QVV6bXdLdlRDamFDV0lwQUtoU1pRdUNEak5hM0Z4bDU1SGRKdzRnTzRjVVhpRC9nSHJnZytvai9CZ1VOaHZMdXpkRjJrQkxYQzBtYm12Wm54ZU1iT1BON2NXNC8ySWtKSVFNS2dSUUlLS3FHajRkYTFtNFNFYlFBdEVwS2VrNGZndEFKS0g3NUw4SFVxQStWeUxQT3pnK2F1M2R3eUs3VTZUOWpNY0hIS3JEQXhaL0crZnZOZk9FS1dYZjdCcDQrdXkyUlJXY2RkS2NHaXNvNWJxL2g1OHJvWGw1V0crWExRakh0UjRrVWw4VzVlcVAxVTVnZm5DZkZrUDc0VVIxNVVlaWVqQ1pQcDdPekFlNGViYkhaYm11RTQyMmFIcHptSno3Z0QzQjJyS3hRNWo1eUxQMHdQbUIwanVNeit1akcyNE9uN2I3QytEM1pXMXQyNjlmWG83dWZMYjQ5UTRvME1SaDhLZTMxWVNQQUwxai9JazBVR3ExdFhUNnZocWxUejlNSzlPWXFvWW1PQkE2T1BNUStBUkgwNHkxQ25ENmRLR0RROEV3eDF1cTJWeFpjU1FLK3d6L2NucVdUMThOaHR6SklMQUZYQ1RJTDR1Y3cyZENMcVdiYkxkWjA2dkdmRkdBMVBXRHBCUS9zUlI1ZVJrdFlycjJmME5NWVNsNXo3Ty9pQm52NzArOEJUbG1NZmtJd1NabG44eXJodUVITHNoWFIxNXFxQm9MYWI1ZFFMYmhtUDZQS0RpWHE5ZHNOdFhORGxXcXIwemdtOVg2WnE0OVZUN0NmOENhV3FyeU5sTDBWYWdXV290Q2cwem94VUZpc0FObyt0dGd6OUlxNVRaSXFheVBGdml6ckZIYm9HQUFBPSJ9 -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["period"],"name":[1],"type":["chr"],"align":["left"]},{"label":["gcm"],"name":[2],"type":["chr"],"align":["left"]},{"label":["scenario"],"name":[3],"type":["chr"],"align":["left"]},{"label":["dt"],"name":[4],"type":["date"],"align":["right"]},{"label":["tasmin"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["tasmax"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-01","5":"27.90901","6":"40.94215"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-02","5":"41.27745","6":"49.23688"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-03","5":"42.79757","6":"51.37850"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-04","5":"45.48856","6":"54.48774"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-05","5":"39.80006","6":"53.75567"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-06","5":"44.74287","6":"55.89536"}],"options":{"columns":{"min":{},"max":[10],"total":[6]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+{"columns":[{"label":["Name"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Owner"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Year"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Month"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Day"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Julian"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["Station"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["Standard"],"name":[9],"type":["chr"],"align":["left"]},{"label":["ZipCodes"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["Scope"],"name":[11],"type":["chr"],"align":["left"]},{"label":["Item"],"name":[12],"type":["chr"],"align":["left"]},{"label":["Value"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["Qc"],"name":[14],"type":["chr"],"align":["left"]},{"label":["Unit"],"name":[15],"type":["chr"],"align":["left"]}],"data":[{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"259","8":"125","9":"english","10":"93203","11":"daily","12":"DayAirTmpMax","13":"94.20","14":"NA","15":"(F)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"259","8":"125","9":"english","10":"93203","11":"daily","12":"DayAirTmpMin","13":"64.30","14":"NA","15":"(F)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"259","8":"125","9":"english","10":"93203","11":"daily","12":"DayEto","13":"0.21","14":"NA","15":"(in)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"259","8":"125","9":"english","10":"93203","11":"daily","12":"DayAsceEto","13":"0.21","14":"NA","15":"(in)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"259","8":"125","9":"english","10":"93203","11":"daily","12":"DayPrecip","13":"0.00","14":"NA","15":"(in)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"17","7":"260","8":"125","9":"english","10":"93203","11":"daily","12":"DayAirTmpMax","13":"86.30","14":"NA","15":"(F)"}],"options":{"columns":{"min":{},"max":[10],"total":[15]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><strong>Pro Tip:</strong></p>
+<p>You can download data from the CIMIS network directly into R using
+the <a href="https://cran.r-project.org/package=cimir"><code>cimir</code></a>
+package (Michael Koohafkan).</p>
+<pre><code>library(cimir)
+set_key(&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;)
+arvinedison_tbl &lt;- cimis_data(targets = 125, start.date = &quot;2023-09-16&quot;, end.date = &quot;2023-10-15&quot;,
+                               items = &quot;day-air-tmp-max,day-air-tmp-min,day-eto,day-precip&quot;)</code></pre>
+<p><br />
+</p>
+</div>
+<div id="challenge-1.-would-you-consider-the-cimis-data-to-be-long-or-wide-it-is-tidy" class="section level2">
+<h2>CHALLENGE #1. Would you consider the CIMIS data to be long or wide?
+It is tidy?</h2>
+<p><br />
+</p>
+</div>
+<div id="create-a-date-column" class="section level2">
+<h2>Create a date column</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShsdWJyaWRhdGUpXG5hcnZlZHNuX2R0X3RibCA8LSBhcnZpbmVkaXNvbl90YmwgfD4gXG4gIG11dGF0ZShEdCA9IG1ha2VfZGF0ZSh5ZWFyID0gWWVhciwgbW9udGggPSBNb250aCwgZGF5ID0gRGF5KSkgfD4gXG4gIHJlbG9jYXRlKER0LCAuYWZ0ZXIgPSBEYXkpXG5cbiMjIFZpZXcoYXJ2ZWRzbl9kdF90YmwpXG5oZWFkKGFydmVkc25fZHRfdGJsKVxuYGBgIn0= -->
+<pre class="r"><code>library(lubridate)
+arvedsn_dt_tbl &lt;- arvinedison_tbl |&gt; 
+  mutate(Dt = make_date(year = Year, month = Month, day = Day)) |&gt; 
+  relocate(Dt, .after = Day)
+
+## View(arvedsn_dt_tbl)
+head(arvedsn_dt_tbl)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MTYsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyAxNiJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJyMVZ3VzdVTUJEMUp2RnVONkxWU3UwWGNGb09SRVc5Y0NPSXBhaVZDb1h1UXVHQ1RHSmFpNndkSmQ1dWx4TWZ3STByVXYrQWYrQ0s0TVFYOUNjNGNDaU00MHhvVXFSZDFBcEx1Mi9tZWNhZUdZK2RKNFA5RFgvZko0UzR4SE5ieEtVZ0Vqb2FidDY4VFlqbmdOSWlIdWthUEFhalZSQjY1YTlkVHRCSWpFVitlYVcrYWlmWFRBc2xyMUt0NzNCdHlqVFBnb2dGQityb3YzQ0VySmo5dzVPUHBzcGtVYXo4cmx0bFVhejgxa3QrSHQ1Q045ZjZmZTliZmo2RzFxL1dNRFJLV0k3SGlxUTNnSUlBbmxYQnBYYjMrUmpXazNwcDlVV1JOTnFMeTRORTVJZFhxV0prUHo0WElTK0tqY2hvekVReXU3elNhUFlCbTkwVjJYQ2M3ckRqaTV6QXU5SUc3cjVXcGVZYml6emlmNWd1TUxzWmowVDYxNFd4Qk0vZWY0WHhMZHhkM1REanpwZlRCNS9XM3A0aTRvbUVvdy9GZkJVc2JQQUx4ai9nK1NUZC91YU5pNkxYRjNLZVhKZzMybGV5TWNmMjdhSFBReUJSSHM1U2xPbWpxZVFaVGp6bkRHVzZvNlRHVG5HaFZxWG9ERFJXZkh1U0NGYTlWWHUxcDJzSlZCbXpMRWI5aFVqdnFaaFhUK2RlcEtvZ3ZDM054emp4bENVVG5IQWVSMmd5a2tJM0V1MW1haHBnc3N2Ry9CMzhRWFYvV2tNSHk0d09mc3cwQzE1bnBoVEZUYTR0MTFHcFNRQVdjOHpYZ2phY1cxbUQ2RVNIRS9sbTNmU0FYOUIyTEpkeSs1emNzMXU1R0JERkVzSU5GTEk2aTRTOTRrbXByRUJ5Ulc1Qm1nbUpOZmVCelFPdE5FTTdQMUlKTXZaMU92c05vbFlWd3h3SEFBQT0ifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Name"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Owner"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Year"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Month"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Day"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Dt"],"name":[7],"type":["date"],"align":["right"]},{"label":["Julian"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["Station"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["Standard"],"name":[10],"type":["chr"],"align":["left"]},{"label":["ZipCodes"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["Scope"],"name":[12],"type":["chr"],"align":["left"]},{"label":["Item"],"name":[13],"type":["chr"],"align":["left"]},{"label":["Value"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["Qc"],"name":[15],"type":["chr"],"align":["left"]},{"label":["Unit"],"name":[16],"type":["chr"],"align":["left"]}],"data":[{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"2023-09-16","8":"259","9":"125","10":"english","11":"93203","12":"daily","13":"DayAirTmpMax","14":"94.20","15":"NA","16":"(F)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"2023-09-16","8":"259","9":"125","10":"english","11":"93203","12":"daily","13":"DayAirTmpMin","14":"64.30","15":"NA","16":"(F)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"2023-09-16","8":"259","9":"125","10":"english","11":"93203","12":"daily","13":"DayEto","14":"0.21","15":"NA","16":"(in)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"2023-09-16","8":"259","9":"125","10":"english","11":"93203","12":"daily","13":"DayAsceEto","14":"0.21","15":"NA","16":"(in)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"16","7":"2023-09-16","8":"259","9":"125","10":"english","11":"93203","12":"daily","13":"DayPrecip","14":"0.00","15":"NA","16":"(in)"},{"1":"cimis","2":"station","3":"water.ca.gov","4":"2023","5":"9","6":"17","7":"2023-09-17","8":"260","9":"125","10":"english","11":"93203","12":"daily","13":"DayAirTmpMax","14":"86.30","15":"NA","16":"(F)"}],"options":{"columns":{"min":{},"max":[10],"total":[16]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
   </script>
 </div>
 <!-- rnb-frame-end -->
@@ -3113,21 +2973,187 @@ sac_temps_tbl |&gt;
 <p><br />
 </p>
 </div>
-<div id="compute-daily-temperature-rnage" class="section level1">
-<h1>Compute Daily Temperature Rnage</h1>
-<p>Compute the daily temperature range:</p>
+<div id="create-a-wide-version-of-the-table" class="section level2">
+<h2>Create a wide version of the table</h2>
+<p>Guide to pivoting: <a href="https://tidyr.tidyverse.org/articles/pivot.html" class="uri">https://tidyr.tidyverse.org/articles/pivot.html</a></p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2FjX3RlbXBzX3RibCB8PiBcbiAgcGl2b3Rfd2lkZXIobmFtZXNfZnJvbSA9IGNsaW1fdmFyLCB2YWx1ZXNfZnJvbSA9IHRlbXBfZikgfD4gXG4gIG11dGF0ZShkaXVybmFsX3JhbmdlX2YgPSB0YXNtYXggLSB0YXNtaW4pIHw+IFxuICBoZWFkKClcbmBgYCJ9 -->
-<pre class="r"><code>sac_temps_tbl |&gt; 
-  pivot_wider(names_from = clim_var, values_from = temp_f) |&gt; 
-  mutate(diurnal_range_f = tasmax - tasmin) |&gt; 
-  head()</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5cilcbmFydmVkc25fd2lkZV90YmwgPC0gYXJ2ZWRzbl9kdF90YmwgfD4gXG4gIHBpdm90X3dpZGVyKG5hbWVzX2Zyb20gPSBJdGVtLCB2YWx1ZXNfZnJvbSA9IFZhbHVlLCBpZF9jb2xzID0gYyhTdGF0aW9uLCBEdCkpXG5cbiMjIFZpZXcoYXJ2ZWRzbl93aWRlX3RibClcbmhlYWQoYXJ2ZWRzbl93aWRlX3RibClcbmBgYCJ9 -->
+<pre class="r"><code>library(tidyr)
+arvedsn_wide_tbl &lt;- arvedsn_dt_tbl |&gt; 
+  pivot_wider(names_from = Item, values_from = Value, id_cols = c(Station, Dt))
+
+## View(arvedsn_wide_tbl)
+head(arvedsn_wide_tbl)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6Nywic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI2IMOXIDciXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCZ3R5aVREbWl1QmlZR0JnWm1CaFptUmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1aTEFEc1FBUXMwRWxtRk1TSzhsbG9wckU1WkdZNHU3cWE2VHJHa3hERVZRN1dZdVNDMHhNS2Vjd01QT0JUSFc0MHdrS1FRWWc3UUNsRzZEMEFRamRCWlh2QXN1akJUSnJjazVpY1RIVWlUQkJGcGZFa2xRZy9RK0lJWlpZdjlqeTBIMzVTUWVYeGMwRmkrOXFPN2ltaVYzbjRtZHdjTnZYYVZ2UWVOVEIrVmxHd2VLRDRRNXU4V0syQlJ2TTRQcGNLbWJZRmt5MGR2Q1lGOFJsMjVQdDRMbWhhUEcxMTg0TzNuWjV0Z1VubmpwNFBkaTUrTHB3bVlQM3A5bTJCVk9DNGZxMEJMNGJHMzJOY3BDL1ZuTG1iQldEZzZKbXZyRnhJWStENHY4cERJd3lEUTdhTDEzT25QV29jVkR6RS83L2YwSUp1cWZ5RW5OVFlaNWlod3F5RmFRV1plYW53QkpEZW5JdWxNbFJuSnlhbHdpVWcvS1pVa3BnV2tvU2kzTXo4NUI1aVJWUUhuOUtabWxSWG1KT2ZGRmlYbnBxZkJxYUV6aUw4c3YxWU03Z0Jaa0tpcFgvLy8vL2dpaGsrbzhXNWx3cGlTV0plbWxGUUMyUWtFY3hqajIvb0NRelB3OW9HQk1vUjdDaWFXWXNRaE5nVDg0b3pjczJOQVFaREJhR0FGNG9tdzJKelE2eGlobm1JRmFZZDFQejBqUHpVbUZCbXBPWWxKb0Q1ZkFCUFFmMm0xNUJVV1llTExTNGdLTEZlaVg1Sllrd2RWekorVGt3RVVocStnY0F5Z080TndBRUFBQT0ifQ== -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6Nywic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI2IMOXIDciXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCZ3R5aVREbWl1QmlZR0JnWm1CaFptUmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1aTEFETVI4UXN6bkVPNEJVTXhCTEEvVkQ5RjNXZ0loZjFuQ0EwZzFRK2dDRTFvVEthMEkxb2ppRU5Ua25zYmdZeUJCQUVtUnhTU3hKQmRMLzRJNEw3emtEQkdjZFFpY2JnNEJEeUFPSW9hRThVUEhORVBGZ2lEcTR2Z0JoaUxqZkdZaTZBS2c1L2hDbndNVzl6NkRvc3ovMTBIMmRTTlZEK3hPQnIxdmxkZ1RabjV3SkFyUHNqM1BaRml5K3pnVVhoL0l4OUtHck8zcW9QMGJqNjJHNE9KUVAwOGRBSkxEZkRyTVBOUkR6RW5OVFlZSElEaFZrRHk1SkxNbk16NE55bVZ4S29Dd2VsOFJLeDh5aWtOd0MzOFFLVExGTW1BNDJvSmhyU1Q2VXh3VlNVWnljaWhEaEJJb0VGS1VtWnhhZ09ZZXpLTDljRCtZa1hwRGRvQlR4Ly8vL1h4Q0ZUUC9SNHBzckpiRWtVUyt0Q0tnRkV1c294ckhuRjREOEFUU01DWlJpV2RFME14YWhDYkFuWjVUbVpSdVlnQXdHQzBNQUw1VE5oc1JtaDFqRkRITVFLOHpycVhucG1YbXBzT0ROU1V4S3pZRnkrSUNlQS90TnI2QW9NdzhXcGx4QTBXSzlrdnlTUkpnNnJ1VDhISmdJSkNYL0F3Q0tnTGdmb0FNQUFBPT0ifQ== -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["period"],"name":[1],"type":["chr"],"align":["left"]},{"label":["gcm"],"name":[2],"type":["chr"],"align":["left"]},{"label":["scenario"],"name":[3],"type":["chr"],"align":["left"]},{"label":["dt"],"name":[4],"type":["date"],"align":["right"]},{"label":["tasmin"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["tasmax"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["diurnal_range_f"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-01","5":"27.90901","6":"40.94215","7":"13.033136"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-02","5":"41.27745","6":"49.23688","7":"7.959430"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-03","5":"42.79757","6":"51.37850","7":"8.580927"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-04","5":"45.48856","6":"54.48774","7":"8.999176"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-05","5":"39.80006","6":"53.75567","7":"13.955603"},{"1":"day","2":"HadGEM2-ES","3":"rcp45","4":"2050-01-06","5":"44.74287","6":"55.89536","7":"11.152496"}],"options":{"columns":{"min":{},"max":[10],"total":[7]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+{"columns":[{"label":["Station"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Dt"],"name":[2],"type":["date"],"align":["right"]},{"label":["DayAirTmpMax"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["DayAirTmpMin"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["DayEto"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["DayAsceEto"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["DayPrecip"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"125","2":"2023-09-16","3":"94.2","4":"64.3","5":"0.21","6":"0.21","7":"0.00"},{"1":"125","2":"2023-09-17","3":"86.3","4":"61.6","5":"0.19","6":"0.18","7":"0.00"},{"1":"125","2":"2023-09-18","3":"83.5","4":"66.2","5":"0.20","6":"0.19","7":"0.00"},{"1":"125","2":"2023-09-19","3":"84.2","4":"62.0","5":"0.18","6":"0.17","7":"0.00"},{"1":"125","2":"2023-09-20","3":"86.8","4":"61.6","5":"0.19","6":"0.18","7":"0.00"},{"1":"125","2":"2023-09-21","3":"78.2","4":"55.6","5":"0.18","6":"0.17","7":"0.09"}],"options":{"columns":{"min":{},"max":[10],"total":[7]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+</div>
+<div id="fill-in-missing-evapotranspiration-values" class="section level2">
+<h2>Fill in Missing Evapotranspiration Values</h2>
+<p>First, we create a data frame with just Eto:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXJ2ZWRzbl9ldDBfdGJsIDwtIGFydmVkc25fZHRfdGJsIHw+IFxuICBmaWx0ZXIoSXRlbSA9PSBcIkRheUV0b1wiKSB8PiBcbiAgc2VsZWN0KFN0YXRpb24sIER0LCBJdGVtLCBWYWx1ZSwgVW5pdClcblxuaGVhZChhcnZlZHNuX2V0MF90YmwpXG5gYGAifQ== -->
+<pre class="r"><code>arvedsn_et0_tbl &lt;- arvedsn_dt_tbl |&gt; 
+  filter(Item == &quot;DayEto&quot;) |&gt; 
+  select(Station, Dt, Item, Value, Unit)
+
+head(arvedsn_et0_tbl)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6NSwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI2IMOXIDUiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCZ3R5aVREbWl1QmlZR0JnWm1CaFptUmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1rZ1ZpUGlCbWM0aDNBS2xtSUpZRzZvZm91NndCRWIrczRRQ2xHNkQwQVFpdENaWFhoR3BFY1FocmNrNWljVEdRSVlBa3lPS1NXSklLcFA5QnhkbWc0bXd1aVpXdUpmbFU0a0U5Ym4vcW9mczZrYXFIOWljQ1g3Zks3UWl5UHprVEJHYlpIK2V5TFZoOG5Rc3VEdVdqdVlsRkl6TlBreUkyV29Ea0plYW13Z0tFRlNySUhseVNXSktabndmbE1ybVV3RXp3TEVuTmhla01TOHdwVFlWSmhPWmxscUFaelZtVVg2NEhNNTRYWkE0b3B2Ny8vLzhMb3BEcFAxbzhjS1VrbGlUcXBSVUJ0VUJpQThVNDl2d0NrSnVBaGpIQlVoS3lac1lpTkFIMjVJelN2R3dEVTVEQllHRUk0SVd5MlpEWXJCQ3JtR0VPZ29VRFcycGVlbVllekkrc09ZbEpxVGxRRGgvUWMyQy82UlVVWmViQndvY0xLRnFzVjVKZmtnaFR4NVdjbndNVGdhU3dmd0M2VTZ0SU9BTUFBQT09In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Station"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Dt"],"name":[2],"type":["date"],"align":["right"]},{"label":["Item"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Value"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Unit"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"125","2":"2023-09-16","3":"DayEto","4":"0.21","5":"(in)"},{"1":"125","2":"2023-09-17","3":"DayEto","4":"0.19","5":"(in)"},{"1":"125","2":"2023-09-18","3":"DayEto","4":"0.20","5":"(in)"},{"1":"125","2":"2023-09-19","3":"DayEto","4":"0.18","5":"(in)"},{"1":"125","2":"2023-09-20","3":"DayEto","4":"0.19","5":"(in)"},{"1":"125","2":"2023-09-21","3":"DayEto","4":"0.18","5":"(in)"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+<p>Are there missing values?</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgVmlldyhhcnZlZHNuX2V0MF90YmwpXG5cbnN1bW1hcnkoYXJ2ZWRzbl9ldDBfdGJsKVxuYGBgIn0= -->
+<pre class="r"><code>## View(arvedsn_et0_tbl)
+
+summary(arvedsn_et0_tbl)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgIFN0YXRpb24gICAgICAgICAgRHQgICAgICAgICAgICAgICAgIEl0ZW0gICAgICAgICAgICAgICBWYWx1ZSAgICAgICAgICAgIFVuaXQgICAgICAgICAgXG4gTWluLiAgIDoxMjUgICBNaW4uICAgOjIwMjMtMDktMTYgICBMZW5ndGg6MzAgICAgICAgICAgTWluLiAgIDowLjEwMDAgICBMZW5ndGg6MzAgICAgICAgICBcbiAxc3QgUXUuOjEyNSAgIDFzdCBRdS46MjAyMy0wOS0yMyAgIENsYXNzIDpjaGFyYWN0ZXIgICAxc3QgUXUuOjAuMTUwMCAgIENsYXNzIDpjaGFyYWN0ZXIgIFxuIE1lZGlhbiA6MTI1ICAgTWVkaWFuIDoyMDIzLTA5LTMwICAgTW9kZSAgOmNoYXJhY3RlciAgIE1lZGlhbiA6MC4xODAwICAgTW9kZSAgOmNoYXJhY3RlciAgXG4gTWVhbiAgIDoxMjUgICBNZWFuICAgOjIwMjMtMDktMzAgICAgICAgICAgICAgICAgICAgICAgTWVhbiAgIDowLjE3MDggICAgICAgICAgICAgICAgICAgICBcbiAzcmQgUXUuOjEyNSAgIDNyZCBRdS46MjAyMy0xMC0wNyAgICAgICAgICAgICAgICAgICAgICAzcmQgUXUuOjAuMTkwMCAgICAgICAgICAgICAgICAgICAgIFxuIE1heC4gICA6MTI1ICAgTWF4LiAgIDoyMDIzLTEwLTE1ICAgICAgICAgICAgICAgICAgICAgIE1heC4gICA6MC4yMTAwICAgICAgICAgICAgICAgICAgICAgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgTkEncyAgIDo1ICAgICAgICAgICAgICAgICAgICAgICAgICBcbiJ9 -->
+<pre><code>    Station          Dt                 Item               Value            Unit          
+ Min.   :125   Min.   :2023-09-16   Length:30          Min.   :0.1000   Length:30         
+ 1st Qu.:125   1st Qu.:2023-09-23   Class :character   1st Qu.:0.1500   Class :character  
+ Median :125   Median :2023-09-30   Mode  :character   Median :0.1800   Mode  :character  
+ Mean   :125   Mean   :2023-09-30                      Mean   :0.1708                     
+ 3rd Qu.:125   3rd Qu.:2023-10-07                      3rd Qu.:0.1900                     
+ Max.   :125   Max.   :2023-10-15                      Max.   :0.2100                     
+                                                       NA&#39;s   :5                          </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+</div>
+<div id="fix-1.-replace-missing-values-with-the-mean-or-median" class="section level2">
+<h2>Fix #1. Replace missing values with the mean or median</h2>
+<p>Step 1. Decide: mean or median?</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXJ2ZWRzbl9ldDBfdGJsIHw+IHB1bGwoVmFsdWUpIHw+IGhpc3QoYnJlYWtzID0gMjApXG5gYGAifQ== -->
+<pre class="r"><code>arvedsn_et0_tbl |&gt; pull(Value) |&gt; hist(breaks = 20)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA8IAAAJSCAMAAAA/JIxoAAAA/1BMVEUAAAAAADoAAGYAOjoAOmYAOpAAZpAAZrY6AAA6ADo6AGY6OgA6Ojo6OmY6ZmY6ZpA6ZrY6kJA6kLY6kNtmAABmAGZmOgBmOjpmOmZmOpBmZgBmZjpmZmZmZpBmkJBmkLZmkNtmtrZmtttmtv+QOgCQOmaQZjqQZmaQkJCQkLaQtmaQtpCQtraQttuQ29uQ2/+2ZgC2Zjq2kDq2kGa2kLa2tma2tpC2tra2ttu225C227a229u22/+2/7a2/9u2///T09PbkDrbkGbbtmbbtpDbtrbbttvb25Db27bb29vb2//b/7bb/9vb////tmb/25D/27b/29v//7b//9v///81A5olAAAACXBIWXMAABRMAAAUTAFGjW/LAAAgAElEQVR4nO2dC3vbRnZAh5JccRu/NmLlduNdp5aqtN1qTcVtnK7VuoyVbtJWlEzy//+W4knMgCBIAIPh3ME532frAeLeO+AcPAYDSq0AQDDq0AUAQBdQGEA0KAwgGhQGEA0KA4gGhQFEg8IAokFhANGgMIBoUBhANCgMIBoUBhANCgOIBoUBRIPCAKJBYQDRoDCAaFAYQDQoDCAaFAYQDQoDiAaFAUSDwgCiQWEA0aAwgGhQGEA0KAwgGhQGEA0KA4gGhQFEg8IAokFhANGgMIBoUBhANCgMIBoUBhANCgOIBoUBRIPCAKJBYQDRoDCAaFAYQDQoDCAaFAYQDQoDiGbACi8mSp1m30+VOvqkfS3z+HdVv+2Nxyul1PG3+758s/qobaf16+xmHtVw0TFGvt2W77+KGvS27kUP41K6ivdieanU6F32Q7zCk/tSrG1voMFsj9fIAYUT6hWOjHL6nseVRZzt+/rN6qdFT29Nd4XX2y1WL6Zqt5K/aB+FI/mKzTKr2kR7KRyl6ryD8wcUTqhXeK9+YZF52uH39mej+qiPbhyfWlXRTeF1PVOVUbFXyl+0l8Lakdc4IteutEG0avc9nDegcEL9O+9a4ej4Mmoiz4bC0waH8K3YUzgW7/Q+dq5m/7iXwpq3lefRe75Vs+oTApmgcIJ/Cjc5SpQVjnq3haOMPYVn6dcNSY0X7aWwdvZceR6951tlZwN5AgonlCVIhl/U6MXHVdpX1hdyj1fj+Pe32XrLm+jHF7dZ94s6/dF/Xil1Ei2+exUHeBYHSH7/Kf7F6M19usqzW7MWPayRLy/04jFe/eW9UXi5ak2Z7PhUriKp7mq9h5jlzY1rOn5zrzXq2W2usL4t0loqm6Ctm0Yq2jFN64nXLUtXvCjZhvE4XtbKahuLY+96sd7G/Lcbm8hsYnww736a4gkonFCSIO4o64s3XamZ9vs4xHnyw+iPhcK/U0mIm/yF8Shs/PtvsiD5KsZBwAhbqfDrtKKj29VuheMOmq68UUVS3b+Ps/rzQHlzT/IL6aTC16nCxrZIVvnDeOu1uh5p3Y68nqKuzZanCmeR041TqfD6THq9EYw2blXYbKK2k5PPwBXW0CTIB1DT3qQpNSteHvdn7XW5wtmyebLm4yQNO1eb6D3IDFupsL7aLoXXp6TVVZzlR8X8VLmIH/+21ChzW2zUsm2TRsvW7cjrjUOV1zEVzqkZWpylNa9P8802blPYbGK+VhigcEW3iXvT1/Ep7/EfkrNFfVc+inb2n8dpD4i7UXTSvLzRFc4PBtkBNX9dHDDpr9EKcRytd5bDlq+Fk0Kf3K4ezwvl6hSea8exchVJdfkLMpWniddJKy42GlXaFnktD+MqCcxIVT5tH4BKFI7OoZNWnq22KZwMjZlt1tq4TeFSYVsuy2WCwtUKG91T6y7p77N+lP+cHKmy3m/0UU2e0yxj3tG0BOWwVQoXI7u7FS6PhmlVPFlfTJ+l4c6KcNl57lTbAaQKV9ZSNeRWitRc4WRpWVKTbFxbvwrS2rhF4XJhedODAIUrFE4uuF78uO5t2jVm2gXT74qfZ4XCRcf4cnelCnkusoxPspGeov+Xw1YqfKot30Phou+bVZytG5Se6ca/X3fnZL2imvn6RFrbFtVNyDAjtVD4TN8KWwaX021tDJcXbdyicLmwjT2AZAaucP1wVj7yXO4X2W+Kn+eFwlm/SqZIqgqFkxWM/l8Ou13h0jFlm8JF36+sYpXdVMlV0a/U9UZlJ5vmtlgvrrqaNCNtbLeqa+Gqm0obzTBID9Jb2rhF4XJhKBwGdTeVvtxkgytJl2uucNJnnl1/f1iFq6tYZTdVcmd2KGxuizYK141IN1c4OZP+j/X9KbONKDwodkyw/PJDfK9WH1jZ60T6Ig+tnRHXK7zXiXTygtKJ9Hq605YT6S1VZAU8+X7DHbMa7fXFtqhVuDxIpNW17b5w8xPpZGO/zrOX2lh14M9OpI3Rq+pSZILCCRUKrzY7kzHudFY9nGUMeO6l8EbYKoWTn7XhrFyJuuGsLVXkIVVWTOmIVBrOKm2LWoXLxzZtqkl+0V0/O2uP4az1mX26nym1UVdY20QbB12Gs4KgRuFfvvvN11EHuBuvFY76x/22m0qPya3TssJnxTyEHQrvdVMpz3OR7THepj/W3VTaUkXe4HWS+PuouXe/eXF9v3mnzNwWtQqXIhnbrW6O9PpF+q2zjbvcOdmd6rP1ttPaqJ8w6ZuoVBg3lcJgu8L6pVO2i1f5DZecbVM71ifSR7fG/eIahcthKxVWxfWoPhWkSuFkEuT2KhLmxYFMn1RxttGo0raoV9iMVLHdKo58+Yv0qR36CMSmbckaWfJSG/UDv76JSoWlU153dxERoHDC5qloxst4adoB4tfms/lG365DxJ3k38qSmPOtdilcDluh8F9dFsbmaeMpkFUKr2cAV1eRkIiaCzXPO3iiTjYFVD1P9wTmtqhXuBRpvd3WzwtXTGrMXxSPkmezUNNZkFsVTo/XWajShLl8U5Q3kVkYEyzDoO5a+PFKm9ofnUVGvXr09SpfYD7mMHp5P984Vf38VTKpPh3I2alwKWzViHSWKX958up5tcJFB62sYp1Du3l8E6d/dp016n38FMN1fjA3tsUOhUuR1tut7lM7shclN7ruioc5tits7H7MNhYX0KVNZBbGYw5Qot8pt43vgEQrBHOauIr3NrYvW6MNFMwUaRTuwuzZm+TQtJ5k3w/Nb2JOwxmsiUf5rG/beTh3hVG4E/pQT4/nZc0VdvXhUOYjWHsd2BqvMs+ezbCJjY8W8wYU7sL6WdVeB0daTCVy1EddKLx4dd290FJIC5/v6Q8o3Ilf0qGeZ9Z7mU4LhaNVXAzXuFC4B2YhHYRRGEA2KAwgGhQGEA0KA4gGhQFEg8IAokFhANGgMIBoUBhANCgMIBoUBhANCgOIBoUBRIPCAKJBYQDRoDCAaFAYQDQoDCAaFAYQDQoDiAaFAUSDwgCiQWEA0aAwgGhQGEA0KAwgGhQGEA0KA4gGhQFEg8IAokFhANGgMIBoUBhANCgMIBoUBhANCgOIBoUBRIPCAKJBYQDRoDCAaFAYQDQoDCAaFAYQDQoDiAaFAURjS+Evv1oKBABN6Krw3Xe/v12tfhorpV7eW6kIABrQTeHlNFJXXcyUOv5KqSc4DOCabgrP1Ojvfxgfj4+iI/HjRJ1ZKgoA9qWTwstLdbFazVX8f/yVwzCAazopvJgcfcr/L74CgDv6VlgZdEkGsAW1m0OX2CNOT6RD3pBwONR/7SLkntetbXM1ev7N+GQyul6t7sapyb0lA6gGhTtwE52jjN7N05OVlz0nA6gEhbvw5cOP0dnz3blSx297TwZQBQqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwqHmQwGAwpbYPnrr+6SARigcAeWN3/9Kfr/SkW8vO85GUAlKNyexbk6+rRaTJR69kqpJ7scDnlDwuFA4fZM1ZPb1WqWyPt4rs56TQZQDQq3Znk5epf/v1o9jHcdhkPekHA4ULg1i0l0Gp39X3ztKRnAFlC4NYtJehSuUVgZdEkGsAUUbs9Una7ia+GL1Sq/JO4vGUA1KNyeh3F8K2lxHh+MP49Tk3tLBlANCncg8lYdv/4mPU3eNSCNwtALKNyFx6v8OvfkuvdkAFWgcEe+/PLhw4d95leiMPQCCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCoeZDAYDCucs/3XHnzWzmQzAFiics5io4zd9WhzyhoTDgcJr7s6V6tPikDckHA4U1lj2anHIGxIOBwqbpBbv8XcKbSQD6A4Kl0klHr11kgygKyhssHz/VaTvmw+v9viT352TAVgAhQsSf9WLj/H3c/XE9hVxyBsSDgcK5ywu9YvgxeToU4/JAGyBwjmLiT4U/fi31selQ96QcDhQeM3/uEwGYAkUDjMZyEDtZmcIFC54/Mfo5Hnx6i1TO8ARFvxD4TXLGxUPYS0m9gejN5MBxKBwR4y2zdTo29jdx0v794Q3kgHEoHBHjIcNL0fv0u8exr0chkPekNASFO6IeVMpvxPcwz3hcjKABBTuCEdhOCwo3JHStfDRbfz1ccK1MDgChTtijkjHMyyfPo3+Y0QaHIHCHSk95vA5fsxBHXNfGFyBwh2peOS/v2mWIW9IaAkKd4QJlnBYULgjZtu+vH/1NOUZN5XACSjcEaNtD+P1zHLuC4MbULgjRtum6uT615ReLohD3pDQEhTuiDk7K5/a4SAZQAIKd6R6gqWDZAAJKNyR6gmWDpIBJKBwR4y2zdWpu2QAMSjcEeMofHeujv/wIeFHHnMAJ6BwR0p/2ZCbSuAYFO6IcRT+7vWa33MUBiegcEeYYAmHBYU7stG2Lz1+mHTIGxJagsIdKT1seBNfBS8mL3nYEByBwh3ZfOQ/Vlid9DLHI+QNCS1B4Y6UPnjnNJmhteRDaMEVKNyR8uysdJIlH38HrkDhjpTnSKcK8yG04AoU7ki1wg9jFAY3oHBHSs8LX6QKz/qZLB3yhoSWoHBHSo85HP05UvjLjVIXvScDiEHhjphtm+VTpHsZkEZh2ASFO1L++8JXY6VGL26dJANA4c7Yatte8zJD3pDQEhTuiKW27XcXKuQNCS1B4Y4YN5XyD5He93Oklz9/yPhhPPqX3Z8TEPKGhJagcEc6PfKvr7DPSiFvSGgJCnfEaNuX9DOkf7lS3+71yGH8YNPz5BMCvhmPnu/+nICQNyS0BIU7Ut222b73hT+PR2/jr1wLQ0tQuCPVbVtM9n3M4fFSxQ8Xb1XYPNNuWyVsoHZy6Ar3BIU7sk3h/edIz9TJLUdh5+zstlI2Ngp3pLpt8yafYPkwVmco7BoUthpCMMbzwtk9oh+uxo0ec1heqeO9Hm0KeUO6BoWthhDMlptKDT945/N4r8N2yBvSNShsNYRgqj5H+p8+fGwa5vG7fT54OuQN6RoUthpCMHyOtFBQ2GoIwaCwUFDYagjBbJtg2cvfVQp5Q7oGha2GEAwKCwWFrYYQjNm2m2Sq1fKnfj6DFoUtgsJWQwim9FHw2Qfu9PS3wkPekK5BYashBFP+ENryd70lg26gsNUQgkFhoaCw1RCCMf8gS/6M4UzxB1k8B4WthhBM6XOkR9/Gw1nf8znS3oPCVkMIpjwinZI+x99zMugCClsNIZhS237hc6SFgMJWQwiGCZZCQWGrIQSz0ba9PtPdVjJoDQpbDSEYs23xR1LGf6D0ZS+Ts1DYIihsNYRgjLYtL1WqcNNH/tskg06gsNUQgilNsDxNJnVEKvfypw1D3pCuQWGrIQRjTu0YvUvnZT3085xDyBvSNShsNYRgyhMsU4WZYOk9KGw1hGCqFX7Y6wMpOyWDbqCw1RCCMdo2VRepwjMeNvQdFLYaQjClOdJHf44U/nLDHGnvQWGrIQRjtm2Wf+ZOLwPSKGwRFLYaQjCltj0yR1oIKGw1hGCMtv3c4+TKjWTQCRS2GkIw5fvCzpJBN1DYagjBVH/wjoNk0A0UthpCMKWbSv086l+ZDDqBwlZDCMZo25cbdfKH9A+U/sgES79BYashBGOeSPf4lxzKyaAbKGw1hGCM4azsj5PG7PO3Rjslg26gsNUQguGDd4SCwlZDCCZv2/LnXq5+q5NBd1DYagjB5G3Lbyj1+dFZKGwRFLYaQjAlhfu9NRzyhnQNClsNIRgUFgoKWw0hGBQWCgpbDSEYFBYKClsNIRgUFgoKWw0hGBQWCgpbDSEYFBYKClsNIZhC4dHz169ffzNOvjDB0ntQ2GoIwRQKKwMec/AcFLYaQjDrtn351aCXSVohb0jXoLDVEILhMQehoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCC6dq2u1dPn12n3+7+w6Yhb0jXoLDVEILp2LZp8mcQT27j71HYJShsNYRgurVtpkZvf/3lSo3erVDYLShsNYRgOrVteaku4q+z5M8Ro7BLUNhqCMF0atta2sRhFHYJClsNIRg7CkfXxKfVCiuDLsnAwILCaicO2oHCXel4Ip1cBCffqZcchV1iQ2EvOj4Kd6Rb2+KDb8riXP0WhR2CwlZDCKZb2xYTlWsbOaxQ2B0obDWEYDq27fF8re3yBoUdgsJWQwjGZtuW/33vLtnQQWGrIQTDHGmhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEIJBYaGgsNUQgkFhoaCw1RCCQWGhoLDVEILxR2G1GwsVdE/ipM49WuKFwja2px8KW3hXD9QxPFLYwvuwuwI/+osFdpbhRmEvtqeFEJ5szzagcNMkTuq00BI/ei0KNwrRBhRumsRJnRZa4kevReFGIdqAwk2TOKnTQkv86LUo3ChEG1C4aRIndVpoiR+9FoUbhWgDCjdN4qROCy3xo9eicKMQbUDhpkmc1GmhJX70WhRuFKINKNw0iZM6LbTEj16Lwo1CtAGFmyZxUqeFlvjRa1G4UYg2oHDTJE7qtNASP3otCjcK0QYUbprESZ0WWuJHr0XhRiHagMJNkzip00JL/Oi1KNwoRBtQuGkSJ3VaaIkfvRaFG4VoAwo3TeKkTgst8aPXonCjEG1A4aZJnNRpoSV+9FoUbhSiDSjcNImTOi20xI9ei8KNQrQBhZsmcVKnhZb40WtRuFGINqBw0yRO6rTQEj96LQo3CtEGFG6axEmdFlriR69F4UYh2oDCTZM4qdNCS/zotSjcKEQbULhpEid1WmiJH70WhRuFaAMKN03ipE4LLfGj16JwoxBtQOGmSZzUaaElfvRaFG4Uog0o3DSJkzottMSPXovCjUK0AYWbJnFSp4WW+NFrUbhRiDagcNMkTuq00BI/ei0KNwrRBhRumsRJnRZa4kevReFGIdqAwk2TOKnTQkv86LUo3ChEG1C4aRIndVpoiR+9FoUbhWgDCjdN4qROCy3xo9eicKMQbUDhpkmc1GmhJX70WhRuFKINKNw0iZM6LbTEj16Lwo1CtAGFmyZxUqeFlvjRa1G4UYg2oHDTJE7qtNASP3otCjcK0QYLUZe/Rtx3TmbjfdhdQfckTuq00BI/ei0KNwrRhq5RH69UxovbbslsvA+7K+iexEmdFlriR69F4UYh2tAx6ixy9/jp82+efhV9c9YpmY33YScWkjip00JL/Oi1KNwoRBu6RZ2r0dv8+89jddElmY33YScWkjip00JL/Oi1KNwoRBs6RV1e6tbO1ZMdV8QobA8L/cVFCBRuFKINnaIuJkeftv3UOJmN92EnFpI4qdNCS/zotSjcKEQb+lZYGdRWAhA4XWTbLk6XlaMTaW0Ia7bzRBoAbNNtx/AwVi8+pt7+cqV2DmcBgG06Htvn4+IsoRicBgBXdD09X969im8Jq+Pn15xFA7jH6RxpALANCgOIBoUBRIPCAKJBYQDRoDCAaFAYQDQoDCAafxQ+1NRzgL04tCDb8KcwTyrxowyq0PCjDD+qqMCfwjypxI8yqELDjzL8qKICfwrzpBI/yqAKDT/K8KOKCvwpzJNK/CiDKjT8KMOPKirwpzBPKvGjDKrQ8KMMP6qowJ/CPKnEjzKoQsOPMvyoogJ/CvOkEj/KoAoNP8rwo4oK/CnMk0r8KIMqNPwow48qKvCnME8q8aMMqtDwoww/qqjAn8I8qcSPMqhCw48y/KiiAn8K86QSP8qgCg0/yvCjigr8KcyTSvwogyo0/CjDjyoq8KcwTyrxowyq0PCjDD+qqMDbwgBgH1AYQDQoDCAaFAYQDQoDiAaFAUSDwgCiQWEA0aAwgGhQGEA0KAwgGhQGEA0KA4gGhQFEg8IAokFhANGgMIBoUBhANIdS+O5cqZPr0i9nR59qljov4/Fq7KaM+o0RsbwcvTtwFY+vlBq9ue+9ih1lfP5KqeO3B6jC6AzO+uc+HEjhefpXly+MXz6MszeqcqnzMh7G6dKzg1aRMFP9K1xfxSxd+qR3h+vLmB7qLTE6g7P+uReHUXgxibbF8nul9dJoBzvOfq5c6ryM5aV6eR8v7due+o0RE/Wf3hWuryKq4Ov71d249267q4zR2/hH52+J0Rmc9c/9OIzCM3Uaf5lqu9PljRpl+9qKpQco42GcHnJmfZdRvzHiny5PzntXuL6Kabp0nn45WBnZezHre0+yUYXRGZz1z/04jMLT9D14GJ9qvzr5eJn3l42lhygjo/duu7OK6ehP/V8L11axmLg64tRvDFcKb+2BSWdw1j/34yAKLy/zM+bi2ur9df7rqqUHKCOn76Pwzirm6qz/4az6KvKDUO/s2BiLSXoi3fMOZXsPjDuDs/65JwdRON+pl3buS3OX3/uuv76M9U8927Oririn9K9wfRXRwSc6nXUwIr1rYzyex+NIJ7cHqSLrDM76554cSOF0/1U63q0VrlzquoyMad/n0buqmEa9xoXCdVXM1W8nTkakd22Mz8nA8Kjnu0pbe2DSGZz1zz1B4XqFb9RJz+/TjiqS8/jDK6xG16t4RLrnEZwdG2OelPG574HxbT0w7QwovBJ0Ir2c9m7wjirSMZPDn0in+Xu/Jq4vY3mZutv3CGN1FXln4ER6tXW4wIfhrJWu8OLcwVyG+iqyKRUR/faX+irmytGBp74MV/JUVrHuDAxnxUzznbqxN823TfVS52WsHifx/fzeqa3ClcL1VeRH3/4PPLVlODv+VVShdQZn/XM/vJnasdIv/w43tWOl72Xd3LuvryL74RBTO1YVZ7B9H3j8KGOzCr0zMLVjlWyQr+83pqhp7lQsdV6Gq7eovorsBxcTLGuqmCejwG4mWNaUMVPpfeG+y9isQu8Mzvrnfhz+MYdiPv+61x7iMYeNMvKJ7f3fSanfGOkPTh9zqKjiJl3a/6ljfRlTR2WUqzA7A485xBSPa1X12gM8bLhRxlzp79qhqsh/cPqw4ba3xMVTfjvKcP+wYVJFqTPwsCEA2AKFAUSDwgCiQWEA0aAwgGhQGEA0KAwgGhQGEA0KA4gGhQFEg8IAokFhANGgMIBoUBhANCgMIBoUBhANCgOIBoUBRIPCAKJBYQDRoDCAaFAYQDQoDCAaFAYQDQoDiAaFAUSDwgCiQWEA0aAwgGhQGEA0KAwgGhQGEA0KA4gGhQFEg8IAokFhANGgMIBoUNgrFpOjT/G/+Pt5+qUZM3XWeJ27N+mXc6VOrquXTtWFXqK+fKpO19/PlbGs/FKj0Cf3jQuFKlDYKzSFF5PmMrZSeJ46OFcJF5VLaxR+GBc/T83sdQq3ax5sgsJeoSk8bXMQbq/wYhKtufxelbPuVHh5uV62mIze6YvqFF7NzNdCW1DYKwqFH8atjlKtFZ6lx+Jpef2dCudrJt+ZZ8e1Ci8mp1uXQQNQ+EBEUnweq9Gb+/g4lhyQHsZP7guFp+lBavn+K6VGL2Izpkf/eamOrjLHUrXi69fjt8kvljdjdfIuVfhzvNLLNPSfbqovcfM1p/Hp82ku6cPYFKtYmle74eX6TDo7Hhclxy/VGmfWm7cQOoLCB2KqXifXnlHPrlJ4MUm6fGRFQiL10e+il/8ldSFVbpYuPS1e+TRWOPt1Ejr9dsOWYs1U0uVl6mGWVyszU3hd7eahNT9ypy5rJW8orNUb74S4GrYBCh+IyI3T+9XdOL4CrVA469/RqentavU4iX2dJiJmL05e9DA++RgtvUxtPrmNv43Wiy5Jr7NfRz6N3sbflk5a9TWT43ku5oag+Ym0eplVu6nwXOV7lTOz5LLCetbNvQW0A8Yd4UIAAANpSURBVIUPxDTt93H3r1J4lp6TpkvSK9zs7k16qpwonp2Kxi5kI0mRsoZkyc/rQWcte7FmrnDqU340XpMrvK52U+Esd/pFL7mssJ61IhW0AoUPRHbtGffjKoWL8aMvP79/pVKFkwNzIkOySn7KGp+0ZteaiTnxofdFevWbXZ7mS3P0NfdUeF1txRjVtLSfyEsuKWxkLWSHbqDwgciHq6J+XKlw1r1/Gqed/kzTKFqUOLmYFErM9QvMh2SlZx+NkTI9ub7mfifSRbUVCmd7lWyvU5RcUtjIumI8yxIofCD2U3im1PHzNx9nmsKJpckvdJkMhdNBYWVeZuvJDQ2TVbcNZ+2lcLFXMUveULg0rwuFbYDCB2Kaj+msfc0vNLUT6XyuhKFwZNn/JV7oMyn0E+mE5d0rVb6ls8aYg2FIWr6pZJ5I6/M/dWb5XsUseaNxhrOcSNsBhQ/ENJ/WGA/zJILM1MZwVqZeOii1vjyejv6Y/j6LkV5nFsNZGZt3ZTeyJ7/fb2rHutoqhaO9yv9O8n1AUbK2M5ql7Tw1XsJwlg1Q+EBMlfo6uU1zkd2H+TxWxk2lbNbj29Xq8Ty7gZspPE+vjZNvohjR4uRe8Oh6tZzGSx7GR/Fl8PfmYLeRXV8zXRil+vq+YoJlulSrtnLK1XT0z9mZvF5ytjPKG2dk5aaSLVD4QEzV02Rk5+UqH356XjG1Y5oPAOkKR5Zkp6DFHI5skHn0TXq8zudzbFNYXzPOfrr1MYd0aT6143R9R9r0eF6sqZWcvTRvnJGVqR22QOEDkU5ZzCYbPpyr0duqCZbL95EAx2/+MjbuM03Xc5HjCYvJtMf0pfoES/XiduuItLnmT8khctvDhsnSbIJlXG2lwtFeJc+glZzN9s4bZ2ZlNMsSKHwgphvHO5OWjzm4YvE3Xa9jeczBEih8IHYp3PJhQ1d0f2Kfhw0tgcIHYqfClp+JnyuN2tT7vHL5D1394yBsCxQ+EDsVbvfBO9ujWVW4O3zwji1QGEA0KAwgGhQGEA0KA4gGhQFEg8IAokFhANGgMIBoUBhANCgMIBoUBhANCgOIBoUBRIPCAKJBYQDRoDCAaFAYQDQoDCAaFAYQDQoDiAaFAUSDwgCiQWEA0aAwgGhQGEA0KAwgGhQGEA0KA4gGhQFEg8IAovl/+fjqyfjyZ+kAAAAASUVORK5CYII=" /></p>
+<!-- rnb-plot-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+<p>Step 2. Compute the median</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudmFsdWVfbWVkaWFuIDwtIGFydmVkc25fZXQwX3RibCB8PiBwdWxsKFZhbHVlKSB8PiBtZWRpYW4obmEucm0gPSBUUlVFKVxudmFsdWVfbWVkaWFuXG5gYGAifQ== -->
+<pre class="r"><code>value_median &lt;- arvedsn_et0_tbl |&gt; pull(Value) |&gt; median(na.rm = TRUE)
+value_median</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMThcbiJ9 -->
+<pre><code>[1] 0.18</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+<p>Step 3. Substitute the median whenever <code>Value</code> is NA.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXJ2ZWRzbl9ldDBfZml4MV90YmwgPC0gYXJ2ZWRzbl9ldDBfdGJsIHw+IFxuICBtdXRhdGUoVmFsdWVfRml4MSA9IGlmX2Vsc2UoaXMubmEoVmFsdWUpLCB2YWx1ZV9tZWRpYW4sIFZhbHVlKSlcblxuIyBWaWV3KGFydmVkc25fZXQwX2ZpeDFfdGJsKSBcbmBgYCJ9 -->
+<pre class="r"><code>arvedsn_et0_fix1_tbl &lt;- arvedsn_et0_tbl |&gt; 
+  mutate(Value_Fix1 = if_else(is.na(Value), value_median, Value))
+
+# View(arvedsn_et0_fix1_tbl) </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+</div>
+<div id="fix-2.-interpolate-missing-values" class="section level2">
+<h2>Fix #2. Interpolate missing values</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh6b28pXG52YWxzX2xpbmVhcl9pbnRlcnBvbGF0aW9uIDwtIG5hLmFwcHJveChhcnZlZHNuX2V0MF90YmwkVmFsdWUpXG52YWxzX2xpbmVhcl9pbnRlcnBvbGF0aW9uXG5gYGAifQ== -->
+<pre class="r"><code>library(zoo)
+vals_linear_interpolation &lt;- na.approx(arvedsn_et0_tbl$Value)
+vals_linear_interpolation</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSAwLjIxMDAgMC4xOTAwIDAuMjAwMCAwLjE4MDAgMC4xOTAwIDAuMTgwMCAwLjE5MDAgMC4xOTAwIDAuMTkwMCAwLjE4MDAgMC4xODI1IDAuMTg1MCAwLjE4NzVcblsxNF0gMC4xOTAwIDAuMTMwMCAwLjEyMDAgMC4xNjAwIDAuMTcwMCAwLjE4MDAgMC4xOTAwIDAuMTgwMCAwLjE5MDAgMC4xODAwIDAuMTcwMCAwLjE2MDAgMC4xMDAwXG5bMjddIDAuMTUwMCAwLjE1MDAgMC4xNTAwIDAuMTUwMFxuIn0= -->
+<pre><code> [1] 0.2100 0.1900 0.2000 0.1800 0.1900 0.1800 0.1900 0.1900 0.1900 0.1800 0.1825 0.1850 0.1875
+[14] 0.1900 0.1300 0.1200 0.1600 0.1700 0.1800 0.1900 0.1800 0.1900 0.1800 0.1700 0.1600 0.1000
+[27] 0.1500 0.1500 0.1500 0.1500</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBZb3UgY2FuIGFsc28gZG8gc3BsaW5lIGludGVycG9sYXRpb25cbiMgdmFsc19zcGxpbmVfaW50ZXJwb2xhdGlvbiA8LSBuYS5zcGxpbmUoYXJ2ZWRzbl9ldDBfdGJsJFZhbHVlKVxuIyB2YWxzX3NwbGluZV9pbnRlcnBvbGF0aW9uXG5gYGAifQ== -->
+<pre class="r"><code># You can also do spline interpolation
+# vals_spline_interpolation &lt;- na.spline(arvedsn_et0_tbl$Value)
+# vals_spline_interpolation</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+<p>Add the imputed values as a new column with
+<code>bind_cols</code>:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXJ2ZWRzbl9ldDBfZml4Ml90YmwgPC0gYXJ2ZWRzbl9ldDBfZml4MV90YmwgfD4gXG4gIGJpbmRfY29scyhWYWx1ZV9GaXgyID0gdmFsc19saW5lYXJfaW50ZXJwb2xhdGlvbilcblxuIyBWaWV3KGFydmVkc25fZXQwX2ZpeDJfdGJsKVxuaGVhZChhcnZlZHNuX2V0MF9maXgyX3RibClcbmBgYCJ9 -->
+<pre class="r"><code>arvedsn_et0_fix2_tbl &lt;- arvedsn_et0_fix1_tbl |&gt; 
+  bind_cols(Value_Fix2 = vals_linear_interpolation)
+
+# View(arvedsn_et0_fix2_tbl)
+head(arvedsn_et0_fix2_tbl)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6Nywic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI2IMOXIDciXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCZ3R5aVREbWl1QmlZR0JnWm1CaFptUmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1aTEFETVI4UXN6bkVPNEJVTXhCTEEvVkQ5RjNXZ0loZjFuQ0EwZzFRK2dDRTFvVEthMEkxb2ppRU5Ua25zYmdZeUJCQUVtUnhTU3hKQmRML29PSnNVSEUybDhSSzE1SjhLdkdnSHJjLzlkQjluVWpWUS9zVGdhOWI1WFlFMlorY0NRS3o3STl6MlJZc3ZzNEZGNGZ5MGR6RW9wR1pwMGtSbTN4M2tLa1BOUUx5RW5OVFlSSEFEaFZrRHk1SkxNbk16NE55bVZ4S1lDNzJMRW5OaGVrTVM4d3BUWVZKaE9abHdoUnhnU1hpM1RJckRERkVqTkNzNXl6S0w5ZURPWUVYWkJjbzlmei8vLzhYUkNIVGY3UzB3WldTV0pLb2wxWUUxQUpKSVNqR3NlY1hnTndOTkl3SmxMcFowVFF6RnFFSnNDZG5sT1psR3hxQ0RBWUxRd0F2bE0yR3hHYUhXTVVNY3hBckxEbWw1cVZuNXNIQ2dUVW5NU2sxQjhyaEEzb083RGU5Z3FMTVBIandBRVdMOVVyeVN4Smg2cmlTODNOZ0lwQlUvdzhBSU9wWmVzd0RBQUE9In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Station"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Dt"],"name":[2],"type":["date"],"align":["right"]},{"label":["Item"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Value"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Unit"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Value_Fix1"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Value_Fix2"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"125","2":"2023-09-16","3":"DayEto","4":"0.21","5":"(in)","6":"0.21","7":"0.21"},{"1":"125","2":"2023-09-17","3":"DayEto","4":"0.19","5":"(in)","6":"0.19","7":"0.19"},{"1":"125","2":"2023-09-18","3":"DayEto","4":"0.20","5":"(in)","6":"0.20","7":"0.20"},{"1":"125","2":"2023-09-19","3":"DayEto","4":"0.18","5":"(in)","6":"0.18","7":"0.18"},{"1":"125","2":"2023-09-20","3":"DayEto","4":"0.19","5":"(in)","6":"0.19","7":"0.19"},{"1":"125","2":"2023-09-21","3":"DayEto","4":"0.18","5":"(in)","6":"0.18","7":"0.18"}],"options":{"columns":{"min":{},"max":[10],"total":[7]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+<p>This is just scratching the surface of dealing with missing
+values!</p>
+<p>See also: <a href="https://steffenmoritz.github.io/imputeTS/">imputeTS</a></p>
+</div>
+<div id="challenge-2" class="section level2">
+<h2>CHALLENGE #2</h2>
+<p>There are also some missing values in the Maximum Daily Air
+Temperature (DayAirTmpMax).</p>
+<p>Decide what would be a reasonable method to deal with these, and
+implement it.</p>
+<p><br />
+</p>
+</div>
+<div id="resampling-data" class="section level2">
+<h2>Resampling data</h2>
+<p>Bin the Eto values into low, medium, and high:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6OCwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI2IMOXIDgiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCcTFUdlU4Q01SUXY5d1ZjQXBybzdBd0RseWlMaXptR0UrTW9pbUVqRlNvMEhqMXk5QlNkWFB3amRIVjNkblR6WTJWd1p2WS9jT0JzYVV2Z05OR29UWnIzM3UrOTEvZDdyMjNOYTVUdGhnMEEwSUdocDRCdU1oV1k5WU5xYVJNQVEyTkdDaGdneStXUUJhMHdKY04ybm0ycjBxendhUEJUeWZKRjNxZ2c4RkdoSXVXbGxBOUNGcVcvS0JNWGlKZ3RIdzRHVEZtZUF3MFBVc1RrUk9LV3hDMFBubS9UNEo4czJiajdNdDY1VzcwWXUwOTdiMWRyOXpYMytacXZHL2ZSM3VyZnZ0b3pYTm9KVGtZQmsrS2Y5Ti96K0JmK1hkenBxc24wVUJ0SHZXODlYMXVKaXlXd2g5VEZaaVNZM3FlUTRvQklVL09vcXJWTGtUclBQSVIraEpTalRyQUtzcWVPWmhVUDF6OGhHeExKSWhvMGZYU0svQVNmYkJpY09ZcFRqaGZuenpTTzQzY1JxTVdKUjJpM0lZWE9jY2hTeEZOY09DNGQ5SGtqN0RDTmZ5TXprWndLRThCU1JIanhkcW5WamNoSnFjd0xUTjFpNWFSdXpla1pVVkpYeEV3MWIwUTZtS2dCbVQ0OFlzMEtJOCthblBibzlFTk1abk5qNk1DaEFZVXF6bTRGdmtMRU41dDhBQmlEeW9NOUJBQUEifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Station"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Dt"],"name":[2],"type":["date"],"align":["right"]},{"label":["Item"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Value"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Unit"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Value_Fix1"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Value_Fix2"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["eto_level"],"name":[8],"type":["chr"],"align":["left"]}],"data":[{"1":"125","2":"2023-09-16","3":"DayEto","4":"0.21","5":"(in)","6":"0.21","7":"0.21","8":"high"},{"1":"125","2":"2023-09-17","3":"DayEto","4":"0.19","5":"(in)","6":"0.19","7":"0.19","8":"medium"},{"1":"125","2":"2023-09-18","3":"DayEto","4":"0.20","5":"(in)","6":"0.20","7":"0.20","8":"high"},{"1":"125","2":"2023-09-19","3":"DayEto","4":"0.18","5":"(in)","6":"0.18","7":"0.18","8":"medium"},{"1":"125","2":"2023-09-20","3":"DayEto","4":"0.19","5":"(in)","6":"0.19","7":"0.19","8":"medium"},{"1":"125","2":"2023-09-21","3":"DayEto","4":"0.18","5":"(in)","6":"0.18","7":"0.18","8":"medium"}],"options":{"columns":{"min":{},"max":[10],"total":[8]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
   </script>
 </div>
 <!-- rnb-frame-end -->
@@ -3137,12 +3163,12 @@ sac_temps_tbl |&gt;
 </p>
 </div>
 <div id="end" class="section level1">
-<h1>END</h1>
-<p>That’s it!</p>
+<h1>END!</h1>
+<p>Save your work to render a HTML file</p>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRhdGEgV3JhbmdsaW5nIFB0IDIiDQpvdXRwdXQ6IA0KICBodG1sX25vdGVib29rOg0KICAgIHRvYzogeWVzDQogICAgdG9jX2Zsb2F0OiB5ZXMNCi0tLQ0KDQojIExvYWQgUGFja2FnZXMgDQoNCmBgYHtyIGNodW5rMDF9DQpsaWJyYXJ5KGRwbHlyKQ0KDQojIFNwZWNpZnkgcGFja2FnZSBwcmVmZXJlbmNlcyBmb3IgZmlsdGVyLCBjb3VudCwgc2VsZWN0LCBhbmQgYXJyYW5nZQ0KbGlicmFyeShjb25mbGljdGVkKQ0KY29uZmxpY3RfcHJlZmVyKCJmaWx0ZXIiLCAiZHBseXIiLCBxdWlldCA9IFRSVUUpDQpjb25mbGljdF9wcmVmZXIoImNvdW50IiwgImRwbHlyIiwgcXVpZXQgPSBUUlVFKQ0KY29uZmxpY3RfcHJlZmVyKCJzZWxlY3QiLCAiZHBseXIiLCBxdWlldCA9IFRSVUUpDQpjb25mbGljdF9wcmVmZXIoImFycmFuZ2UiLCAiZHBseXIiLCBxdWlldCA9IFRSVUUpDQpgYGANCg0KIyBUYWJsZSBTdW1tYXJpZXMNCg0KVGhlIG1haW4gZHBseXIgZnVuY3Rpb24gZm9yIGNyZWF0aW5nIHN1bW1hcmllcyBvZiBkYXRhIGlzIGBzdW1tYXJpc2UoKWAuIFRoZSBzeW50YXggaXMgc2ltaWxhciB0byBgbXV0YXRlKClgLiBTdW1tYXJ5IGNvbHVtbnMgY2FuIHVzZSBhbnkgYWdncmVnYXRlIGZ1bmN0aW9uIGZyb20gYmFzZSBSIG9yIGRwbHlyIChzZWUgdGhlIFtkcGx5ciBjaGVhdHNoZWV0XShodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vcnN0dWRpby9jaGVhdHNoZWV0cy9tYWluL2RhdGEtdHJhbnNmb3JtYXRpb24ucGRmKSBmb3IgYSBsaXN0IG9mIGZ1bmN0aW9ucyB0aGF0IGFyZSBkZXNpZ25lZCB0byB1c2Ugd2l0aCBgc3VtbWFyaXNlKClgKS4NCg0KXA0KDQojIyBTdW1tYXJpc2UgYW4gZW50aXJlIHRpYmJsZQ0KDQpDb21wdXRlIHRoZSBtZWFuIG9mIHNldmVyYWwgY29sdW1ucyAodXNpbmcgdGhlIGBuYS5ybSA9IFRSVUVgIHRvIGlnbm9yZSBOQSB2YWx1ZXMpOg0KDQpgYGB7ciBjaHVuazAyfQ0KDQpsaWJyYXJ5KHBhbG1lcnBlbmd1aW5zKQ0KcGVuZ3VpbnMgfD4gDQogIHN1bW1hcmlzZShiaWxsX2xlbl9tZWFuID0gbWVhbihiaWxsX2xlbmd0aF9tbSwgbmEucm0gPSBUUlVFKSwgDQogICAgICAgICAgICBiaWxsX2RlcHRoX21lYW4gPSBtZWFuKGJpbGxfZGVwdGhfbW0sIG5hLnJtID0gVFJVRSksIA0KICAgICAgICAgICAgYm9keV9tYXNzX21lYW4gPSBtZWFuKGJvZHlfbWFzc19nLCBuYS5ybSA9IFRSVUUpKQ0KYGBgDQoNClwNCg0KIyMgU3VtbWFyaXNlIGdyb3VwcyBvZiByb3dzDQoNCk9mdGVuIHlvdSB3YW50IHRvIGNyZWF0ZSBzdW1tYXJpZXMgZm9yIGdyb3VwcyBvZiByb3dzIChpLmUuLCBhIGRpZmZlcmVudCB1bml0IG9mIGFuYWx5c2lzKS4gDQoNCklmIHdlIHdhbnRlZCB0byBjb21wdXRlIHN1bW1hcnkgc3RhdHMgZm9yIGVhY2ggc3BlY2llcywgeW91IHdvdWxkIGZpcnN0IGdyb3VwIHRoZSByb3dzIGJ5IHNwZWNpZXMgd2l0aCBgZ3JvdXBfYnkoKWAsIGFuZCB0aGVuIHVzZSBgc3VtbWFyaXNlKClgLg0KDQpgYGB7ciBjaHVuazAzfQ0KcGVuZ3VpbnMgfD4gDQogIGdyb3VwX2J5KHNwZWNpZXMpIHw+IA0KICBzdW1tYXJpc2UoYmlsbF9sZW5fbWVhbiA9IG1lYW4oYmlsbF9sZW5ndGhfbW0sIG5hLnJtID0gVFJVRSksIA0KICAgICAgICAgICAgYmlsbF9kZXB0aF9tZWFuID0gbWVhbihiaWxsX2RlcHRoX21tLCBuYS5ybSA9IFRSVUUpLCANCiAgICAgICAgICAgIGJvZHlfbWFzc19tZWFuID0gbWVhbihib2R5X21hc3NfZywgbmEucm0gPSBUUlVFKSkNCmBgYA0KDQpcDQoNCioqSG93IG1hbnkgcm93cyBwZXIgaXNsYW5kPyoqDQoNCkZvciB0aGlzIHF1ZXN0aW9uLCB3ZSBjYW4gdXNlIHRoZSBgbigpYCBmdW5jdGlvbiBpbiBgc3VtbWFyaXNlKClgOg0KDQpgYGB7ciBjaHVuazA0fQ0KcGVuZ3VpbnMgfD4gDQogIGdyb3VwX2J5KGlzbGFuZCkgfD4gDQogIHN1bW1hcmlzZShudW1fcmVjb3JkcyA9IG4oKSkNCmBgYA0KDQpcDQoNCioqQ0hBTExFTkdFICMxKio6IENvbXB1dGUgdGhlIG51bWJlciBvZiBvYnNlcnZhdGlvbnMgcGVyIHllYXINCg0KYGBge3IgY2h1bmswNX0NCiMjIFlvdXIgYW5zd2VyIGhlcmUNCg0KYGBgDQoNClwNCg0KKipDSEFMTEVOR0UgIzIqKjogQ29tcHV0ZSB0aGUgbnVtYmVyIG9mIG9ic2VydmF0aW9ucyBwZXIgeWVhciBhbmQgc3BlY2llcz8NCg0KSGludDogYGdyb3VwX2J5KClgIGNhbiB0YWtlIG1vcmUgdGhhbiBvbmUgY29sdW1uDQoNCmBgYHtyIGNodW5rMDZ9DQojIFlvdXIgYW5zd2VyIGhlcmUNCg0KYGBgDQoNClwNCg0KDQojIEpvaW4gdGFibGVzDQoNCkltcG9ydCBhIGRhdGFzZXQgd2l0aCBzb21lIChmYWtlKSBnZW5ldGljIGluZm9ybWF0aW9uIGFib3V0IFBlbmd1aW5zOg0KDQpgYGB7ciBjaHVuazA3fQ0KbGlicmFyeShyZWFkcikNCmdlbmV0aWNzX3RibCA8LSByZWFkX2NzdigiLi9kYXRhL3Blbmd1aW5fZ2VuZXRpY19kaXZlcnNpdHkuY3N2IikNCmdlbmV0aWNzX3RibA0KYGBgDQoNClwNCg0KV2UgY2FuIGpvaW4gdGhlc2UgY29sdW1ucyB0byB0aGUgUGFsbWVyIFBlbmd1aW5zIGRhdGFzZXQ6DQoNCmBgYHtyIGNodW5rMDh9DQpwZW5ndWlucyB8Pg0KICBsZWZ0X2pvaW4oZ2VuZXRpY3NfdGJsLCBieSA9ICJzcGVjaWVzIikgfD4gDQogIGhlYWQoKQ0KYGBgDQoNCiMgUmVzaGFwZSBEYXRhDQoNCldlIGJlZ2luIGJ5IGltcG9ydGluZyB0aGUgSmFudWFyeSAyMDUwIHByb2plY3RlZCBkYWlseSBtaW5pbXVtIGFuZCBtYXhpbXVtIHRlbXBlcmF0dXJlIGZvciBTYWNyYW1lbnRvOg0KDQpgYGB7ciBjaHVuazA5fQ0Kc2FjX3RlbXBzX3RibCA8LSByZWFkX2NzdigiLi9kYXRhL3NhY3JhbWVudG9fZGFpbHlfdGVtcF9qYW4yMDUwLmNzdiIpDQpzYWNfdGVtcHNfdGJsIHw+IGFycmFuZ2UoZHQpIHw+IHNsaWNlKDE6MTApDQpgYGANCg0KXA0KDQpDb252ZXJ0IGZyb20gYSBsb25nIHRvIHdpZGUgZm9ybWF0Og0KDQpgYGB7ciBjaHVuazEwfQ0KbGlicmFyeSh0aWR5cikNCg0Kc2FjX3RlbXBzX3RibCB8PiANCiAgcGl2b3Rfd2lkZXIobmFtZXNfZnJvbSA9IGNsaW1fdmFyLCB2YWx1ZXNfZnJvbSA9IHRlbXBfZikgfD4gDQogIGhlYWQoKQ0KYGBgDQoNClwNCg0KIyBDb21wdXRlIERhaWx5IFRlbXBlcmF0dXJlIFJuYWdlDQoNCkNvbXB1dGUgdGhlIGRhaWx5IHRlbXBlcmF0dXJlIHJhbmdlOg0KDQpgYGB7ciBjaHVuazExfQ0Kc2FjX3RlbXBzX3RibCB8PiANCiAgcGl2b3Rfd2lkZXIobmFtZXNfZnJvbSA9IGNsaW1fdmFyLCB2YWx1ZXNfZnJvbSA9IHRlbXBfZikgfD4gDQogIG11dGF0ZShkaXVybmFsX3JhbmdlX2YgPSB0YXNtYXggLSB0YXNtaW4pIHw+IA0KICBoZWFkKCkNCmBgYA0KDQpcDQoNCiMgRU5EDQoNClRoYXQncyBpdCENCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRhdGEgV3JhbmdsaW5nIFB0IDM6IFRpbWUgU2VyaWVzIERhdGEgYW5kIE1pc3NpbmcgVmFsdWVzIg0Kb3V0cHV0OiANCiAgaHRtbF9ub3RlYm9vazoNCiAgICB0b2M6IHllcw0KICAgIHRvY19mbG9hdDogeWVzDQotLS0NCg0KIyMgTG9hZCBQYWNrYWdlcyANCg0KYGBge3IgY2h1bmswMX0NCmxpYnJhcnkoZHBseXIpDQoNCiMgU3BlY2lmeSBwYWNrYWdlIHByZWZlcmVuY2VzIGZvciBmaWx0ZXIsIGNvdW50LCBzZWxlY3QsIGFuZCBhcnJhbmdlDQpsaWJyYXJ5KGNvbmZsaWN0ZWQpDQpjb25mbGljdF9wcmVmZXIoImZpbHRlciIsICJkcGx5ciIsIHF1aWV0ID0gVFJVRSkNCmNvbmZsaWN0X3ByZWZlcigiY291bnQiLCAiZHBseXIiLCBxdWlldCA9IFRSVUUpDQpjb25mbGljdF9wcmVmZXIoInNlbGVjdCIsICJkcGx5ciIsIHF1aWV0ID0gVFJVRSkNCmNvbmZsaWN0X3ByZWZlcigiYXJyYW5nZSIsICJkcGx5ciIsIHF1aWV0ID0gVFJVRSkNCmBgYA0KDQpcDQoNCiMjIExvYWQgc29tZSB3ZWF0aGVyIGRhdGEgZnJvbSB0aGUgQ0lNSVMgbmV0d29yaw0KDQpgYGB7ciBjaHVuazAyfQ0KbGlicmFyeShnb29nbGVzaGVldHM0KQ0KYXJ2aW5lZGlzb25fdXJsIDwtICJodHRwczovL2RvY3MuZ29vZ2xlLmNvbS9zcHJlYWRzaGVldHMvZC8xM0ZSNE1qaTI0S3FabUxxS19CaUxLZXc4bk40TWJDZGgxS3B6VDU0aEg0TS8iDQoNCiMjIFRlbGwgUiBub3QgdG8gYXV0aG9yaXplIHdpdGggR29vZ2xlIChub3QgbmVlZGVkIGZvciB0aGlzIHB1YmxpYyBHb29nbGUgU2hlZXQpDQpnczRfZGVhdXRoKCkNCg0KYXJ2aW5lZGlzb25fdGJsIDwtIHJlYWRfc2hlZXQoYXJ2aW5lZGlzb25fdXJsLCBzaGVldCA9ICJTaGVldDEiKQ0KDQojIyBWaWV3KGFydmluZWRpc29uX3RibCkNCmhlYWQoYXJ2aW5lZGlzb25fdGJsKQ0KYGBgDQoNCioqUHJvIFRpcDoqKg0KDQpZb3UgY2FuIGRvd25sb2FkIGRhdGEgZnJvbSB0aGUgQ0lNSVMgbmV0d29yayBkaXJlY3RseSBpbnRvIFIgdXNpbmcgdGhlIFtgY2ltaXJgXShodHRwczovL2NyYW4uci1wcm9qZWN0Lm9yZy9wYWNrYWdlPWNpbWlyKSBwYWNrYWdlIChNaWNoYWVsIEtvb2hhZmthbikuDQoNCmBgYA0KbGlicmFyeShjaW1pcikNCnNldF9rZXkoInh4eHh4eHh4LXh4eHgteHh4eC14eHh4LXh4eHh4eHh4eHh4eCIpDQphcnZpbmVkaXNvbl90YmwgPC0gY2ltaXNfZGF0YSh0YXJnZXRzID0gMTI1LCBzdGFydC5kYXRlID0gIjIwMjMtMDktMTYiLCBlbmQuZGF0ZSA9ICIyMDIzLTEwLTE1IiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpdGVtcyA9ICJkYXktYWlyLXRtcC1tYXgsZGF5LWFpci10bXAtbWluLGRheS1ldG8sZGF5LXByZWNpcCIpDQpgYGANCg0KXA0KDQojIyBDSEFMTEVOR0UgIzEuIFdvdWxkIHlvdSBjb25zaWRlciB0aGUgQ0lNSVMgZGF0YSB0byBiZSBsb25nIG9yIHdpZGU/IEl0IGlzIHRpZHk/DQoNClwNCg0KIyMgQ3JlYXRlIGEgZGF0ZSBjb2x1bW4NCg0KYGBge3IgY2h1bmswM30NCmxpYnJhcnkobHVicmlkYXRlKQ0KYXJ2ZWRzbl9kdF90YmwgPC0gYXJ2aW5lZGlzb25fdGJsIHw+IA0KICBtdXRhdGUoRHQgPSBtYWtlX2RhdGUoeWVhciA9IFllYXIsIG1vbnRoID0gTW9udGgsIGRheSA9IERheSkpIHw+IA0KICByZWxvY2F0ZShEdCwgLmFmdGVyID0gRGF5KQ0KDQojIyBWaWV3KGFydmVkc25fZHRfdGJsKQ0KaGVhZChhcnZlZHNuX2R0X3RibCkNCmBgYA0KDQpcDQoNCiMjIENyZWF0ZSBhIHdpZGUgdmVyc2lvbiBvZiB0aGUgdGFibGUNCg0KR3VpZGUgdG8gcGl2b3Rpbmc6IDxodHRwczovL3RpZHlyLnRpZHl2ZXJzZS5vcmcvYXJ0aWNsZXMvcGl2b3QuaHRtbD4NCg0KYGBge3IgY2h1bmswNH0NCmxpYnJhcnkodGlkeXIpDQphcnZlZHNuX3dpZGVfdGJsIDwtIGFydmVkc25fZHRfdGJsIHw+IA0KICBwaXZvdF93aWRlcihuYW1lc19mcm9tID0gSXRlbSwgdmFsdWVzX2Zyb20gPSBWYWx1ZSwgaWRfY29scyA9IGMoU3RhdGlvbiwgRHQpKQ0KDQojIyBWaWV3KGFydmVkc25fd2lkZV90YmwpDQpoZWFkKGFydmVkc25fd2lkZV90YmwpDQpgYGANCg0KXA0KDQojIyBGaWxsIGluIE1pc3NpbmcgRXZhcG90cmFuc3BpcmF0aW9uIFZhbHVlcw0KDQpGaXJzdCwgd2UgY3JlYXRlIGEgZGF0YSBmcmFtZSB3aXRoIGp1c3QgRXRvOg0KDQpgYGB7ciBjaHVuazA1fQ0KYXJ2ZWRzbl9ldDBfdGJsIDwtIGFydmVkc25fZHRfdGJsIHw+IA0KICBmaWx0ZXIoSXRlbSA9PSAiRGF5RXRvIikgfD4gDQogIHNlbGVjdChTdGF0aW9uLCBEdCwgSXRlbSwgVmFsdWUsIFVuaXQpDQoNCmhlYWQoYXJ2ZWRzbl9ldDBfdGJsKQ0KYGBgDQoNClwNCg0KQXJlIHRoZXJlIG1pc3NpbmcgdmFsdWVzPw0KDQpgYGB7ciBjaHVuazA2fQ0KIyMgVmlldyhhcnZlZHNuX2V0MF90YmwpDQoNCnN1bW1hcnkoYXJ2ZWRzbl9ldDBfdGJsKQ0KYGBgDQoNClwNCg0KIyMgRml4ICMxLiBSZXBsYWNlIG1pc3NpbmcgdmFsdWVzIHdpdGggdGhlIG1lYW4gb3IgbWVkaWFuDQoNClN0ZXAgMS4gRGVjaWRlOiBtZWFuIG9yIG1lZGlhbj8NCg0KYGBge3IgY2h1bmswN30NCmFydmVkc25fZXQwX3RibCB8PiBwdWxsKFZhbHVlKSB8PiBoaXN0KGJyZWFrcyA9IDIwKQ0KYGBgDQoNClwNCg0KU3RlcCAyLiBDb21wdXRlIHRoZSBtZWRpYW4NCg0KYGBge3IgY2h1bmswOH0NCnZhbHVlX21lZGlhbiA8LSBhcnZlZHNuX2V0MF90YmwgfD4gcHVsbChWYWx1ZSkgfD4gbWVkaWFuKG5hLnJtID0gVFJVRSkNCnZhbHVlX21lZGlhbg0KYGBgDQoNClwNCg0KU3RlcCAzLiBTdWJzdGl0dXRlIHRoZSBtZWRpYW4gd2hlbmV2ZXIgYFZhbHVlYCBpcyBOQS4NCg0KYGBge3IgY2h1bmswOX0NCmFydmVkc25fZXQwX2ZpeDFfdGJsIDwtIGFydmVkc25fZXQwX3RibCB8PiANCiAgbXV0YXRlKFZhbHVlX0ZpeDEgPSBpZl9lbHNlKGlzLm5hKFZhbHVlKSwgdmFsdWVfbWVkaWFuLCBWYWx1ZSkpDQoNCiMgVmlldyhhcnZlZHNuX2V0MF9maXgxX3RibCkgDQpgYGANCg0KXA0KDQojIyBGaXggIzIuIEludGVycG9sYXRlIG1pc3NpbmcgdmFsdWVzDQoNCmBgYHtyIGNodW5rMTB9DQpsaWJyYXJ5KHpvbykNCnZhbHNfbGluZWFyX2ludGVycG9sYXRpb24gPC0gbmEuYXBwcm94KGFydmVkc25fZXQwX3RibCRWYWx1ZSkNCnZhbHNfbGluZWFyX2ludGVycG9sYXRpb24NCg0KIyBZb3UgY2FuIGFsc28gZG8gc3BsaW5lIGludGVycG9sYXRpb24NCiMgdmFsc19zcGxpbmVfaW50ZXJwb2xhdGlvbiA8LSBuYS5zcGxpbmUoYXJ2ZWRzbl9ldDBfdGJsJFZhbHVlKQ0KIyB2YWxzX3NwbGluZV9pbnRlcnBvbGF0aW9uDQpgYGANClwNCg0KQWRkIHRoZSBpbXB1dGVkIHZhbHVlcyBhcyBhIG5ldyBjb2x1bW4gd2l0aCBgYmluZF9jb2xzYDoNCg0KYGBge3IgY2h1bmsxMX0NCmFydmVkc25fZXQwX2ZpeDJfdGJsIDwtIGFydmVkc25fZXQwX2ZpeDFfdGJsIHw+IA0KICBiaW5kX2NvbHMoVmFsdWVfRml4MiA9IHZhbHNfbGluZWFyX2ludGVycG9sYXRpb24pDQoNCiMgVmlldyhhcnZlZHNuX2V0MF9maXgyX3RibCkNCmhlYWQoYXJ2ZWRzbl9ldDBfZml4Ml90YmwpDQpgYGANCg0KXA0KDQpUaGlzIGlzIGp1c3Qgc2NyYXRjaGluZyB0aGUgc3VyZmFjZSBvZiBkZWFsaW5nIHdpdGggbWlzc2luZyB2YWx1ZXMhIA0KDQpTZWUgYWxzbzogW2ltcHV0ZVRTXShodHRwczovL3N0ZWZmZW5tb3JpdHouZ2l0aHViLmlvL2ltcHV0ZVRTLykgDQoNCiMjIENIQUxMRU5HRSAjMg0KDQpUaGVyZSBhcmUgYWxzbyBzb21lIG1pc3NpbmcgdmFsdWVzIGluIHRoZSBNYXhpbXVtIERhaWx5IEFpciBUZW1wZXJhdHVyZSAoRGF5QWlyVG1wTWF4KS4gDQoNCkRlY2lkZSB3aGF0IHdvdWxkIGJlIGEgcmVhc29uYWJsZSBtZXRob2QgdG8gZGVhbCB3aXRoIHRoZXNlLCBhbmQgaW1wbGVtZW50IGl0Lg0KDQpcDQoNCiMjIFJlc2FtcGxpbmcgZGF0YQ0KDQpCaW4gdGhlIEV0byB2YWx1ZXMgaW50byBsb3csIG1lZGl1bSwgYW5kIGhpZ2g6DQoNCmBgYHtyIGNodW5rMTJ9DQphcnZlZHNuX2V0MF9maXgzX3RibCA8LSBhcnZlZHNuX2V0MF9maXgyX3RibCB8PiANCiAgbXV0YXRlKGV0b19sZXZlbCA9IGNhc2Vfd2hlbihWYWx1ZV9GaXgyIDw9IDAuMTQgfiAibG93IiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBWYWx1ZV9GaXgyIDw9IDAuMTkgfiAibWVkaXVtIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBUUlVFIH4gImhpZ2giKSkNCg0KIyBWaWV3KGFydmVkc25fZXQwX2ZpeDNfdGJsKQ0KaGVhZChhcnZlZHNuX2V0MF9maXgzX3RibCkNCmBgYA0KDQpcDQoNCiMgRU5EIQ0KDQpTYXZlIHlvdXIgd29yayB0byByZW5kZXIgYSBIVE1MIGZpbGUNCg0KDQoNCg==</div>
 
 
 </div>
@@ -3191,7 +3217,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("nb_datawrangling_02.Rmd");
+  window.initializeSourceEmbed("nb_datawrangling_03.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

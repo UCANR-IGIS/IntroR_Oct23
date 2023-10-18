@@ -71,6 +71,8 @@ sf311_df <- read.csv(URLencode(sf311_url)) |>
 
 #############################################################################
 ## Q08. Write an expression the returns complaints about barking dogs made by phone.
+##      HINT: use the values in the service_subtype column
+
 
 
 #############################################################################

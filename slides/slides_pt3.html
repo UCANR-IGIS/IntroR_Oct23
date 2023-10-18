@@ -392,6 +392,7 @@ src="images/googlesheets4_140x121.png" style="margin-left:2em;" /></p>
 </li>
 <li>skip rows that don’t actually contain data<br />
 </li>
+<li>skip lines that start with a comment character</li>
 <li>specify whether the file contains a header<br />
 </li>
 <li>rename columns as part of the importing<br />
@@ -443,9 +444,9 @@ style="border:1px solid grey;" /></a></p>
 <p><br />
 </p>
 </div>
-<div id="most-popular-dplyr-functions" class="slide section level1">
-<h1>Most Popular <code>dplyr</code> Functions</h1>
-<h2 id="wrangling">Wrangling</h2>
+<div id="popular-dplyr-functions" class="slide section level1">
+<h1>Popular <code>dplyr</code> Functions</h1>
+<h2 id="row-and-column-manipulations">Row and Column Manipulations</h2>
 <table class="tbl_compact">
 <tbody>
 <tr>
@@ -480,22 +481,17 @@ add new columns
 mutate()
 </td>
 </tr>
-<tr>
-<td style="text-align:left;width: 12em; ">
-join data frames
-</td>
-<td style="text-align:left;font-family: monospace;">
-left_join(), right_join(), inner_join()
-</td>
-</tr>
 </tbody>
 </table>
+<!----- taken out:
+, "join data frames on a column", "left_join(), right_join(), inner_join()", "stack data frame", "bind_rows()"
+----->
 <p><br />
 </p>
 <h2 id="chaining-dplyr-functions">Chaining dplyr functions</h2>
 <div class="indented2 indented2r">
-<p>Most <code>dplyr</code> functions <em>take a tibble</em>, and
-<em>return a tibble</em>.</p>
+<p>Most <code>dplyr</code> functions <em>take a tibble</em> as the first
+argument , and <em>return a tibble</em>.</p>
 <p>This makes them very <em>pipe friendly</em>.</p>
 </div>
 <p><br />
@@ -619,10 +615,9 @@ class="slide section level1">
 <p>We’ll be looking at the <a
 href="https://allisonhorst.github.io/palmerpenguins/" target="_blank"
 rel="noopener">Palmer Penguins</a> dataset.</p>
-<center>
-<img src="images/palmer-penguins-logo_130x150.png" /> <img
-src="images/penguiin-culmen-depth_310x200.png" />
-</center>
+<p><img src="images/palmer-penguins-logo_130x150.png"
+style="margin-left:2em;" /> <img
+src="images/penguiin-culmen-depth_310x200.png" /></p>
 <p><br />
 </p>
 <p>This exercise will be <em>R Notebook</em>!</p>
@@ -656,10 +651,34 @@ functions you can put in select():
 starts_with(), ends_with(), contains(), matches()
 ---->
 </div>
-<div id="joining-tables" class="slide section level1">
-<h1>Joining Tables</h1>
+<div id="joining-and-merging-tables" class="slide section level1">
+<h1>Joining and Merging Tables</h1>
+<table class="tbl_compact">
+<tbody>
+<tr>
+<td style="text-align:left;width: 12em; ">
+join data frames on a column
+</td>
+<td style="text-align:left;font-family: monospace;">
+left_join(), right_join(), inner_join()
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12em; ">
+stack data frames
+</td>
+<td style="text-align:left;font-family: monospace;">
+bind_rows()
+</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<h2 id="join-tables-on-a-common-column">Join tables on a common
+column</h2>
 <p><img src="images/table_join01_820x442x256.png" /></p>
-<p>To join two data frames based on a common field, you can use:</p>
+<p>To join two data frames based on a common column, you can use:</p>
 <div class="indented1">
 <p><tt><strong>left_join(<em>x</em>, <em>y</em>,
 <em>by</em>)</strong></tt></p>
@@ -676,7 +695,7 @@ argument. See below.</p>
 <!--- tip --->
 <p>To illustrate a table join, we’ll first import a csv with some fake
 data about the genetics of different iris species:</p>
-<div class="indented4 indented1-r">
+<div class="indented2 indented2r">
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Create a data frame with additional info about the three IRIS species</span></span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>iris_genetics <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Species=</span><span class="fu">c</span>(<span class="st">&quot;setosa&quot;</span>, <span class="st">&quot;versicolor&quot;</span>, <span class="st">&quot;virginica&quot;</span>),</span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>                          <span class="at">num_genes =</span> <span class="fu">c</span>(<span class="dv">42000</span>, <span class="dv">41000</span>, <span class="dv">43000</span>),</span>
@@ -690,7 +709,7 @@ data about the genetics of different iris species:</p>
 </div>
 <p>We can join these additional columns to the iris data frame with
 <code>left_join()</code>:</p>
-<div class="indented4 indented1-r">
+<div class="indented2 indented2r">
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>iris <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">left_join</span>(iris_genetics, <span class="at">by =</span> <span class="st">&quot;Species&quot;</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div>
@@ -750,18 +769,17 @@ would be:</p>
 <p><img src="images/bind_rows_520x220x256.png"
 style="display:block; margin:0 auto;" /></p>
 <div class="indented2">
-<strong><code>bind_rows(x, y))</code></strong>
-</div>
+<p><strong><code>bind_rows(x, y)</code></strong></p>
+<p>where <strong><code>x</code></strong> and
+<strong><code>y</code></strong>:</p>
+<div class="indented1">
 <ul>
-<li><p>x and y are data frames</p></li>
-<li><p>they should have the <em>exact</em> same column structure (names,
-order, &amp; class)</p></li>
-<li><p>you can add more than two data frames</p></li>
+<li>are data frames</li>
+<li>have the <em>exact</em> same column structure (names, order, &amp;
+class)</li>
+<li>you can add more than two data frames</li>
 </ul>
-<p><br />
-</p>
-<div class="indented2 indented2r">
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>xz_tbl <span class="ot">=</span> x <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>(z)</span></code></pre></div>
+</div>
 </div>
 <p><br />
 </p>
@@ -800,11 +818,9 @@ style="border:1px solid grey;" /></a></p>
 <p><em><code>pivot_wider()</code></em><br />
 <img src="images/pivot_wider_674x336x256.png" /></p>
 </div>
-<center>
-More info and examples in the tidyr <a
+<p>More info and examples in the tidyr <a
 href="https://tidyr.tidyverse.org/articles/pivot.html" target="_blank"
-rel="noopener"><strong>Pivoting Vignette</strong></a>
-</center>
+rel="noopener"><strong>Pivoting Vignette</strong></a></p>
 <p><br />
 </p>
 </div>
@@ -836,8 +852,8 @@ etc.
 </p>
 <p>Example:</p>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">head</span>(storms)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">head</span>(storms)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 13
 ##   name   year month   day  hour   lat  long status       category  wind pressure
 ##   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;           &lt;dbl&gt; &lt;int&gt;    &lt;int&gt;
@@ -855,10 +871,10 @@ etc.
 <p><em>For each month, how many storm observations are saved in the data
 frame</em></p>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>storms <span class="sc">|&gt;</span> </span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">select</span>(name, year, month, category) <span class="sc">|&gt;</span>     <span class="do">## select the columns we need</span></span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span>                         <span class="do">## group the rows by month</span></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">num_storms =</span> <span class="fu">n</span>())     <span class="do">## for each group, report the count</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>storms <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">select</span>(name, year, month, category) <span class="sc">|&gt;</span>    <span class="do">## select the columns we need</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span>                        <span class="do">## group the rows by month</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">num_storms =</span> <span class="fu">n</span>())               <span class="do">## for each group, report the count</span></span></code></pre></div>
 <pre><code>## # A tibble: 10 × 2
 ##    month num_storms
 ##    &lt;dbl&gt;      &lt;int&gt;

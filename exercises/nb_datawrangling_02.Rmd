@@ -68,7 +68,7 @@ penguins |>
 
 \
 
-**CHALLENGE #4**: Compute the number of observations per year
+**CHALLENGE #1**: Compute the number of observations per year
 
 ```{r chunk05}
 ## Your answer here
@@ -77,7 +77,7 @@ penguins |>
 
 \
 
-**CHALLENGE #5**: Compute the number of observations per year and species?
+**CHALLENGE #2**: Compute the number of observations per year and species?
 
 Hint: `group_by()` can take more than one column
 
