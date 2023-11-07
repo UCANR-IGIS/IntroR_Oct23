@@ -153,7 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     gtag('js', new Date());
     gtag('config', 'G-41HMZ3JJJ6');
   </script>
-  <script src="lib/header-attrs-2.23/header-attrs.js"></script>
+  <script src="lib/header-attrs-2.25/header-attrs.js"></script>
   <link href="lib/slidy-2/styles/slidy.css" rel="stylesheet" />
   <script src="lib/slidy-2/scripts/slidy.js"></script>
   <script src="lib/slidy_shiny-1/slidy_shiny.js"></script>
@@ -638,6 +638,48 @@ src="images/penguiin-culmen-depth_310x200.png" /></p>
 style="display:block; margin:1em auto; border:none;" /></p>
 <p><br />
 </p>
+</div>
+<div id="pro-tips" class="slide section level1">
+<h1>Pro Tips</h1>
+<h2 id="renaming-columns">Renaming columns</h2>
+<div class="indented2" style="font-family:monospace;">
+<p>my_dataframe |&gt; rename(fname = First, lname = Last)</p>
+<p>my_dataframe |&gt; select(fname = First, lname = Last, term, grade,
+passed)</p>
+</div>
+<p><br />
+</p>
+<h2 id="advanced-select">Advanced <code>select()</code></h2>
+<table class="tbl_compact">
+<tbody>
+<tr>
+<td style="text-align:left;width: 16em; font-family: monospace;">
+select(-age)
+</td>
+<td style="text-align:left;">
+Select all columns <em>except</em> age
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 16em; font-family: monospace;">
+select(fname:grade)
+</td>
+<td style="text-align:left;">
+Select all columns between <code>fname</code> and <code>grade</code>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 16em; font-family: monospace;">
+select(starts_with(“Sepal”))
+</td>
+<td style="text-align:left;">
+Select all columns that start with ‘Sepal’<br>(see also
+<code>ends_width()</code>, <code>contains()</code>, and
+<code>matches()</code>
+</td>
+</tr>
+</tbody>
+</table>
 <!-------
 
 # Advanced `select()`

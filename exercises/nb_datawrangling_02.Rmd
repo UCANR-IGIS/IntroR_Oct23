@@ -1,10 +1,19 @@
 ---
-title: "Data Wrangling Pt 2"
+title: "Data Wrangling 2: Table Summaries, Joins, & Reshaping"
 output: 
   html_notebook:
     toc: yes
+    toc_depth: 2
     toc_float: yes
 ---
+
+```{css echo = FALSE}
+h1,h2,h3 {font-weight:bold;}
+h1 {font-size:24px;}
+h2 {font-size:20px;}
+h3 {font-size:16px;}
+```
+\
 
 # Load Packages 
 
@@ -68,7 +77,9 @@ penguins |>
 
 \
 
-**CHALLENGE #1**: Compute the number of observations per year
+# CHALLENGE #1
+
+Compute the number of observations per year.
 
 ```{r chunk05}
 ## Your answer here
@@ -77,7 +88,9 @@ penguins |>
 
 \
 
-**CHALLENGE #2**: Compute the number of observations per year and species?
+# CHALLENGE #2
+
+Compute the number of observations per year and species.
 
 Hint: `group_by()` can take more than one column
 
@@ -87,7 +100,6 @@ Hint: `group_by()` can take more than one column
 ```
 
 \
-
 
 # Join tables
 
@@ -111,32 +123,61 @@ penguins |>
 
 # Reshape Data
 
-We begin by importing the January 2050 projected daily minimum and maximum temperature for Sacramento:
+## Wide to Long
+
+Start by creating a 'wide' data frame:
 
 ```{r chunk09}
+cases_df <- data.frame(country = c("FR", "DE", "US"),
+                       `2011` = c(7000,5800,15000),
+                       `2012` = c(6900,6000,14000),
+                       `2013` = c(7000,6200,13000),
+                       check.names = FALSE)
+cases_df
+```
+
+\
+
+Next, we combine the values of three year columns into one, with another column for the year:
+
+```{r chunk10}
+library(tidyr)
+
+cases_tidy_df <- cases_df |> 
+  pivot_longer(cols = c("2011", "2012", "2013"), 
+               names_to = "year", 
+               values_to = "cases")
+
+cases_tidy_df
+```
+
+\
+
+## Long to wide
+
+We begin by importing the January 2050 projected daily minimum and maximum temperature for Sacramento:
+
+```{r chunk11}
 sac_temps_tbl <- read_csv("./data/sacramento_daily_temp_jan2050.csv")
-sac_temps_tbl |> arrange(dt) |> slice(1:10)
+sac_temps_tbl |> arrange(dt)
 ```
 
 \
 
 Convert from a long to wide format:
 
-```{r chunk10}
-library(tidyr)
-
+```{r chunk12}
 sac_temps_tbl |> 
-  pivot_wider(names_from = clim_var, values_from = temp_f) |> 
-  head()
+  pivot_wider(names_from = clim_var, values_from = temp_f)
 ```
 
 \
 
-# Compute Daily Temperature Rnage
+## Compute Daily Temperature Range
 
-Compute the daily temperature range:
+Use the 'new' columns to compute the daily temperature range:
 
-```{r chunk11}
+```{r chunk13}
 sac_temps_tbl |> 
   pivot_wider(names_from = clim_var, values_from = temp_f) |> 
   mutate(diurnal_range_f = tasmax - tasmin) |> 
@@ -145,6 +186,6 @@ sac_temps_tbl |>
 
 \
 
-# END
+# End
 
-That's it!
+Remember to save your work to render a HTML copy of the notebook.

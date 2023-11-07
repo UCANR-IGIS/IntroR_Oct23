@@ -153,7 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     gtag('js', new Date());
     gtag('config', 'G-41HMZ3JJJ6');
   </script>
-  <script src="lib/header-attrs-2.23/header-attrs.js"></script>
+  <script src="lib/header-attrs-2.25/header-attrs.js"></script>
   <link href="lib/slidy-2/styles/slidy.css" rel="stylesheet" />
   <script src="lib/slidy-2/scripts/slidy.js"></script>
   <script src="lib/slidy_shiny-1/slidy_shiny.js"></script>
@@ -358,8 +358,8 @@ summarize() with:<br>n(), mean(), median(), sum(), sd(), first(), etc.
 <p><br />
 </p>
 </div>
-<div id="dates-times" class="slide section level1">
-<h1>Dates &amp; Times</h1>
+<div id="time-series-data" class="slide section level1">
+<h1>Time Series Data</h1>
 <h2 id="challenges-with-date-time-data">Challenges with date &amp; time
 data</h2>
 <div class="indented2">
@@ -398,10 +398,17 @@ Date formatting is often regional:
 <h2 id="dates">Dates</h2>
 <div class="indented1">
 <p>Date class in R: <code>Date</code></p>
+<p>Current date:</p>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">Sys.Date</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;2023-10-15&quot;</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">as.Date</span>(<span class="st">&quot;2023-09-25&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">Sys.Date</span>()</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">class</span>(x)</span></code></pre></div>
+<pre><code>## [1] &quot;Date&quot;</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>x</span></code></pre></div>
+<pre><code>## [1] &quot;2023-10-29&quot;</code></pre>
+<p><br />
+</p>
+<p>Text to date:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">as.Date</span>(<span class="st">&quot;2023-09-25&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;2023-09-25&quot;</code></pre>
 </div>
 <p><br />
@@ -417,9 +424,9 @@ Date formatting is often regional:
 <code>POSIXlt</code></p>
 </div>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">Sys.time</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">Sys.time</span>()</span></code></pre></div>
 <pre><code>## [1] &quot;2023-10-17 19:28:42 PDT&quot;</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">class</span>(<span class="fu">Sys.time</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">class</span>(<span class="fu">Sys.time</span>())</span></code></pre></div>
 <pre><code>## [1] &quot;POSIXct&quot; &quot;POSIXt&quot;</code></pre>
 </div>
 <p><br />
@@ -437,18 +444,17 @@ Operations</h2>
 </li>
 <li>time zones automatically saved<br />
 </li>
-<li>date-time math<br />
-</li>
 <li>intervals<br />
+</li>
+<li>date-time math<br />
 </li>
 <li>smart formatting on axes</li>
 <li>etc.</li>
 </ul>
 </div>
 </div>
-<div id="importing-and-exporting-date-times"
-class="slide section level1">
-<h1>Importing and Exporting Date-Times</h1>
+<div id="importing-date-times" class="slide section level1">
+<h1>Importing Date-Times</h1>
 <div class="centerblock">
 <p><a href="https://rstudio.github.io/cheatsheets/lubridate.pdf"
 target="_blank" rel="noopener"><img
@@ -457,8 +463,8 @@ style="border:1px solid grey;" /></a></p>
 </div>
 <p><br />
 </p>
-<h2 id="converting-text-to-date-times">Converting Text to
-Date-Times</h2>
+<h2 id="convert-formatted-text-to-r-datetime-object">Convert Formatted
+Text to R Date/Time Object</h2>
 <div class="indented1">
 <p>Functions from <code>lubridate</code>:</p>
 <div class="indented2" style="font-family:monospace;">
@@ -469,10 +475,10 @@ dmy_hms(), dmy_hm(), dmy_h()</p>
 </div>
 <p>Examples:</p>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">ymd_hms</span>(<span class="st">&quot;2017-11-28T14:02:00&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">ymd_hms</span>(<span class="st">&quot;2017-11-28T14:02:00&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;2017-11-28 14:02:00 UTC&quot;</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">ymd_hms</span>(<span class="st">&quot;2017-11-28T14:02:00&quot;</span>, <span class="at">tz =</span> <span class="st">&quot;America/Los_Angeles&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">ymd_hms</span>(<span class="st">&quot;2017-11-28T14:02:00&quot;</span>, <span class="at">tz =</span> <span class="st">&quot;America/Los_Angeles&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;2017-11-28 14:02:00 PST&quot;</code></pre>
 </div>
 <p><br />
@@ -481,73 +487,125 @@ dmy_hms(), dmy_hm(), dmy_h()</p>
 <p><strong>Pro Tips:</strong></p>
 <p>To see the accepted time zone names, run
 <code>OlsonNames()</code></p>
-<p>Don’t name an object <code>date</code></p>
+<p>Don’t name an object ‘<code>date</code>’</p>
 </div>
 <p><br />
 </p>
-<p>Combining dates and times in separate columns:</p>
+<h2 id="combine-datetime-parts">Combine Date/Time Parts</h2>
 <div class="indented2 indented2r">
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>(x <span class="ot">&lt;-</span> <span class="fu">make_date</span>(<span class="at">year =</span> <span class="dv">2023</span>, <span class="at">month =</span> <span class="dv">10</span>, <span class="at">day =</span> <span class="dv">18</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>(x <span class="ot">&lt;-</span> <span class="fu">make_date</span>(<span class="at">year =</span> <span class="dv">2023</span>, <span class="at">month =</span> <span class="dv">10</span>, <span class="at">day =</span> <span class="dv">18</span>))</span></code></pre></div>
 <pre><code>## [1] &quot;2023-10-18&quot;</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">class</span>(x)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">class</span>(x)</span></code></pre></div>
 <pre><code>## [1] &quot;Date&quot;</code></pre>
+<p><br />
+</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>(y <span class="ot">&lt;-</span> <span class="fu">make_datetime</span> (<span class="at">year =</span> <span class="dv">2023</span>, <span class="at">month =</span> <span class="dv">10</span>, <span class="at">day =</span> <span class="dv">18</span>, <span class="at">hour =</span> <span class="dv">17</span>, <span class="at">min =</span> <span class="dv">15</span>, <span class="at">sec =</span> <span class="dv">0</span>))</span></code></pre></div>
+<pre><code>## [1] &quot;2023-10-18 17:15:00 UTC&quot;</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">class</span>(y)</span></code></pre></div>
+<pre><code>## [1] &quot;POSIXct&quot; &quot;POSIXt&quot;</code></pre>
 </div>
 <p><br />
 </p>
 </div>
 <p><!--- end of h2 ----></p>
-<h2 id="saving-date-times-in-tabular-data-files">Saving Date-Times in
-Tabular Data Files</h2>
-<p>Recommendations:</p>
-<ol style="list-style-type: decimal">
-<li>Use a format that supports and enforces field / column types</li>
-</ol>
-<p>R, any database format (sqlite, PostGres), Stata, SAS, SPSS</p>
-<ol start="2" style="list-style-type: decimal">
-<li>For text (including csv) or Excel, save date-times as character
-fields using unambiguous format:</li>
-</ol>
-<p>dates: <code>yyyy-mm-dd</code></p>
-<p>date-times: <a href="https://en.wikipedia.org/wiki/ISO_8601"
-target="_blank" rel="noopener">ISO 8601</a></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>mydata_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">temp_dt =</span> <span class="fu">Sys.time</span>() <span class="sc">-</span> (<span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>) <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> <span class="dv">24</span> <span class="sc">+</span> <span class="fu">runif</span>(<span class="dv">3</span>, <span class="at">min=</span><span class="dv">0</span>, <span class="at">max=</span><span class="dv">86400</span>),</span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>                      <span class="at">temp_val =</span> <span class="fu">sample</span>(<span class="dv">70</span><span class="sc">:</span><span class="dv">90</span>, <span class="dv">3</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temp_date =</span> <span class="fu">date</span>(temp_dt)) <span class="sc">|&gt;</span> </span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="fu">relocate</span>(temp_date, temp_dt, temp_val)</span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>mydata_df</span></code></pre></div>
-<pre><code>##    temp_date             temp_dt temp_val
-## 1 2023-10-16 2023-10-16 01:28:36       83
-## 2 2023-10-17 2023-10-17 02:45:40       80
-## 3 2023-10-18 2023-10-18 08:55:20       78</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>mydata_4csv <span class="ot">&lt;-</span> mydata_df <span class="sc">|&gt;</span> </span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_chr =</span> <span class="fu">format</span>(temp_date, <span class="st">&quot;%Y-%m-%d&quot;</span>),</span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>         <span class="at">time_chr =</span> <span class="fu">format_ISO8601</span>(temp_dt, <span class="at">usetz =</span> <span class="cn">TRUE</span>)) </span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>mydata_4csv</span></code></pre></div>
-<pre><code>##    temp_date             temp_dt temp_val   date_chr                 time_chr
-## 1 2023-10-16 2023-10-16 01:28:36       83 2023-10-16 2023-10-16T01:28:36-0700
-## 2 2023-10-17 2023-10-17 02:45:40       80 2023-10-17 2023-10-17T02:45:40-0700
-## 3 2023-10-18 2023-10-18 08:55:20       78 2023-10-18 2023-10-18T08:55:20-0700</code></pre>
 <p><br />
 </p>
 </div>
 <div id="missing-data" class="slide section level1">
 <h1>Missing Data</h1>
-<p>Do I have missing values?</p>
-<p><code>is.na()</code> <code>!is.na()</code></p>
-<p>Ignore missing values</p>
-<p><code>mean(x, na.rm = TRUE)</code></p>
-<p>Fill in missing values with a constant</p>
-<p>mean, median</p>
-<p>Impute missing values</p>
-<p>repeat last value<br />
-linear interpolate<br />
-spline interpolate</p>
+<style type="text/css">
+span.mono {
+  font-family: monospace;
+}
+span.gray {
+  color:gray;
+}
+</style>
+<h2 id="step-1-do-i-have-missing-values">Step 1: Do I have missing
+values?</h2>
+<div class="indented2 indented2r">
+<p><code>summary()</code></p>
+<p><code>is.na()</code>, <code>!is.na()</code></p>
 </div>
-<div id="notebook-exercise-clean-cimis-weather-data"
+<p><br />
+</p>
+<h2 id="step-2-how-do-you-want-to-handle-missing-data">Step 2: How do
+you want to handle missing data?</h2>
+<div class="indented2 indented2r">
+<h3 id="option-1-throw-away-the-entire-observation">Option 1: Throw away
+the entire observation</h3>
+<div class="indented2">
+<p><span class="mono">tidyr::drop_na()</span></p>
+</div>
+<p><br />
+</p>
+<h3
+id="option-2-keep-the-observations-but-ignore-missing-values-in-column-summaries">Option
+2: Keep the observations but ignore missing values in column
+summaries</h3>
+<div style="margin-left:3em; font-family:monospace;">
+mean(x, <strong>na.rm = TRUE</strong>)
+</div>
+<p><br />
+</p>
+<h3 id="option-3-replace-missing-values-with-a-constant">Option 3:
+Replace missing values with a constant</h3>
+<div class="indented2">
+<p>common replacement choices: 0, mean, median, etc.</p>
+<p><span class="mono"><span class="gray">mutate( </span>new_col =
+if_else(…)</span><span class="gray"> )</span></span></p>
+<p><span class="mono">tidyr::replace_na()</span></p>
+</div>
+<p><br />
+</p>
+<h3 id="option-4-replace-missing-values-with-another-column">Option 4:
+Replace missing values with another column</h3>
+<div class="indented2">
+<p><span class="mono"><span class="gray">mutate( </span>new_col =
+if_else(…)</span><span class="gray"> )</span></span></p>
+<p><span class="mono"><span class="gray">mutate( </span>new_col =
+coalesce(…)</span><span class="gray"> )</span></span></p>
+<p><span class="mono">tidyr::replace_na()</span></p>
+</div>
+<p><br />
+</p>
+<h3 id="option-5-impute-missing-values-from-other-rows">Option 5: Impute
+missing values from other rows</h3>
+<div class="indented2">
+<p>Sample methods:</p>
+<div class="indented1 li-single">
+<ul>
+<li>repeat last value<br />
+</li>
+<li>linear interpolate<br />
+</li>
+<li>spline interpolate<br />
+</li>
+<li>etc.</li>
+</ul>
+</div>
+</div>
+<div style="margin-left:3em;">
+See <a href="https://cran.r-project.org/package=imputeTS"
+target="_blank" rel="noopener">imputeTS</a> or <a
+href="https://cran.r-project.org/package=zoo" target="_blank"
+rel="noopener">zoo</a> packages.
+</div>
+</div>
+<!------- end step 2 -------------->
+<p><br />
+</p>
+</div>
+<div id="notebook-time-clean-cimis-weather-data"
 class="slide section level1">
-<h1>Notebook Exercise: Clean CIMIS Weather Data</h1>
-<p><img src="images/cimis_station_200x200.jpg" /></p>
-<div class="shaded-box li-single" style="width:50%;">
+<h1>Notebook Time: Clean CIMIS Weather Data</h1>
+<center>
+<img src="images/cimis_station125_east_250x180.jpg" /><br />
+CIMIS Station #125, Arvin-Edison
+</center>
+<p><br />
+</p>
+<div class="shaded-box li-single" style="width:50%; margin:0 auto;">
 <ol style="list-style-type: decimal">
 <li>Import data from CIMIS</li>
 <li>Combine date part columns into a single date column</li>
@@ -557,6 +615,8 @@ class="slide section level1">
 <li>Resample data</li>
 </ol>
 </div>
+<p><br />
+</p>
 <p style="font-family:monospace; font-size:110%; text-align:center;">
 <a href="https://posit.cloud/content/6638058"
 target="_blank">https://posit.cloud/content/6638058</a>
@@ -576,12 +636,79 @@ style="display:block; margin:1em auto; border:none;" /></p>
 <p><br />
 </p>
 </div>
+<div id="pro-tips" class="slide section level1">
+<h1>Pro Tips</h1>
+<h2 id="chaing-the-default-time-zone-on-posit-cloud">Chaing the Default
+Time Zone on Posit Cloud</h2>
+<div class="indented2">
+<p>The default time zone on Posit Cloud is <strong>UTC</strong>.</p>
+<p>To mimic your local computer, you can change the default time
+zone:</p>
+<div class="indented2 indented2r">
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">TZ =</span> <span class="st">&quot;America/Los_Angeles&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<p><br />
+</p>
+<h2 id="saving-date-times-to-disk">Saving Date-Times to Disk</h2>
+<div class="indented2">
+
+<p><strong>Best Option</strong>: Use a file format that supports date
+and time classes</p>
+<div style="margin-left:1em;">
+<p>Examples:</p>
+<div class="indented2 li-single">
+<ul>
+<li>native R files: (*.Rds, *.Rdata)<br />
+</li>
+<li>database files: sqlite, PostgreSQL<br />
+</li>
+<li>stats formats: Stata, SAS, SPSS
+</div></li>
+</ul>
+</div>
+<p><br />
+</p>
+<p><strong>Second best</strong>: Use unambiguous character
+formatting</p>
+<div style="margin-left:1em;">
+<p>For file formats that don’t enforce data types (e.g., csv, txt,
+Excel), save dates as text formatted as:</p>
+<div style="margin-left:2em;">
+<strong><code>yyyy-mm-dd</code></strong>
+</div>
+<div class="indented2 indented2r">
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">format</span>(<span class="fu">Sys.Date</span>(), <span class="st">&quot;%Y-%m-%d&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2023-10-30&quot;</code></pre>
+</div>
+<p><br />
+</p>
+<p>Times can be formatted as <a
+href="https://en.wikipedia.org/wiki/ISO_8601" target="_blank"
+rel="noopener">ISO 8601</a>. Example:</p>
+<div style="margin-left:2em;">
+<strong><code>"2023-10-29T14:30:11-0700"</code></strong>
+</div>
+<p>Note: the last five characters encode the time zone:
+<strong><code>-0700</code></strong>.</p>
+<p><br />
+</p>
+<p><code>lubridate</code> makes this easy with
+<strong><code>format_ISO8601()</code></strong></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>lubridate<span class="sc">::</span><span class="fu">format_ISO8601</span>(<span class="fu">Sys.time</span>(), <span class="at">usetz =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2023-10-30T09:47:55-0700&quot;</code></pre>
+</div>
+</div>
+<p><br />
+</p>
+</div>
 <div id="ggplot" class="slide section level1">
 <h1>ggplot</h1>
 <h2 id="example">Example</h2>
 <p>Load Palmer Penguins data frame:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">library</span>(palmerpenguins)</span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="fu">head</span>(penguins)</span></code></pre></div>
+<div class="indented2 indented2r">
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="fu">head</span>(penguins)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 8
 ##   species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
 ##   &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
@@ -592,17 +719,21 @@ style="display:block; margin:1em auto; border:none;" /></p>
 ## 5 Adelie  Torgersen           36.7          19.3               193        3450
 ## 6 Adelie  Torgersen           39.3          20.6               190        3650
 ## # ℹ 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+</div>
 <p><br />
 </p>
 <p>Use ggplot to make a scatter plot:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> bill_length_mm, <span class="at">color =</span> species)) <span class="sc">+</span></span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Bill Length vs Flipper Length for 3 Species of Penguins&quot;</span>)</span></code></pre></div>
+<div class="indented2 indented2r">
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> bill_length_mm, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Bill Length vs Flipper Length for 3 Species of Penguins&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
 <p><img src="slides_pt4_files/figure-slidy/ggplot_demo-1.png" width="768" /></p>
 </div>
+</div>
 <div id="anatomy-of-a-ggplot" class="slide section level1">
 <h1>Anatomy of a ggplot</h1>
+<div class="indented2 indented2r">
 <div style='position:relative; border:none; height:592px;'>
 <img src="images/ggplot_anatomy_001.png"/>
 <img src="images/ggplot_anatomy_002.png" class="incremental stackme"/>
@@ -611,6 +742,7 @@ style="display:block; margin:1em auto; border:none;" /></p>
 <img src="images/ggplot_anatomy_005.png" class="incremental stackme"/>
 <img src="images/ggplot_anatomy_006.png" class="incremental stackme"/>
 <img src="images/ggplot_anatomy_007.png" class="incremental stackme"/>
+</div>
 </div>
 </div>
 <div id="maping-columns-to-symbology-properties-with-aes"
@@ -695,20 +827,23 @@ the dataframe and inherited from <code>aes()</code><br />
 <strong>size</strong> are manually specified</li>
 </ul>
 </div>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> species, <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span></span>
-<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">color =</span> <span class="st">&quot;navy&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>)</span></code></pre></div>
+<div class="indented2 indented2r">
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> species, <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span></span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">color =</span> <span class="st">&quot;navy&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>)</span></code></pre></div>
 <pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_boxplot()`).</code></pre>
 <p><img src="slides_pt4_files/figure-slidy/ggplot2-1.png" width="768" /></p>
+</div>
 <p><br />
 </p>
 <h2 id="adding-visual-elements-to-a-plot">Adding visual elements to a
 plot</h2>
 <p><code>geom_xxxx()</code> functions can also be used to add other
 graphic elements:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> species, <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span></span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">color =</span> <span class="st">&quot;navy&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
-<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">43.9</span>, <span class="at">size=</span><span class="dv">3</span>, <span class="at">color=</span><span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
-<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="at">x =</span> <span class="dv">3</span>, <span class="at">y =</span> <span class="dv">58</span>, <span class="at">label =</span> <span class="st">&quot;Gentoo penguins </span><span class="sc">\n</span><span class="st"> are just the best!&quot;</span>)</span></code></pre></div>
+<div class="indented2 indented2r">
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> species, <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">color =</span> <span class="st">&quot;navy&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">43.9</span>, <span class="at">size=</span><span class="dv">3</span>, <span class="at">color=</span><span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="at">x =</span> <span class="dv">3</span>, <span class="at">y =</span> <span class="dv">58</span>, <span class="at">label =</span> <span class="st">&quot;Gentoo penguins </span><span class="sc">\n</span><span class="st"> are just the best!&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
@@ -716,57 +851,26 @@ graphic elements:</p>
 ## generated.</code></pre>
 <pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_boxplot()`).</code></pre>
 <p><img src="slides_pt4_files/figure-slidy/ggplot3-1.png" width="768" /></p>
+</div>
 <p><br />
 </p>
 </div>
-<div id="notebook-exercise-palmer-penguin-plots"
+<div id="notebook-time-plotting-the-palmer-penguins-with-ggplot"
 class="slide section level1">
-<h1>Notebook Exercise: Palmer Penguin Plots</h1>
+<h1>Notebook Time: Plotting the Palmer Penguins with ggplot</h1>
+<center>
+<img src="images/ggplot_example_penguin_facets_600x300.png"
+style="display:block; margin:1em auto;" />
+</center>
 <p><br />
 </p>
-</div>
-<div id="transforming-values-with-stat-functions"
-class="slide section level1">
-<h1>Transforming Values with Stat Functions</h1>
-<div class="indented1 singlespace">
-<ul>
-<li><p>To draw a layer, in addition to a <code>geom_xxxx()</code>
-function, ggplot needs a <code>stat_xxxx()</code> function</p></li>
-<li><p><code>stat_xxxx()</code> functions apply a <strong>numeric
-transformation</strong> to the data prior to displaying it</p>
-<ul>
-<li>For many visual properties, the default <code>stat_xxxx()</code> is
-simply the identity function</li>
-</ul></li>
-<li><p>Normally, you don’t have to specify the <code>stat_xxxx()</code>
-function — each <code>geom_xxxx()</code> has a default</p></li>
-</ul>
-</div>
-<p><br />
-</p>
-<h2 id="example-2">Example</h2>
-<p>Under the hood, <code>geom_point()</code> applies
-<code>stat_identity()</code> to the <code>x</code> and <code>y</code>
-properties before drawing it:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x=</span>flipper_length_mm , <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code></pre></div>
-<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
-<p><img src="slides_pt4_files/figure-slidy/ggplot_penguins_scatter-1.png" width="768" /></p>
-<p><br />
-</p>
-<p>But <code>geom_smooth()</code> has to apply a smoothing
-transformation to draw the trend line and confidence envelope:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x=</span>flipper_length_mm , <span class="at">y =</span> bill_length_mm)) <span class="sc">+</span></span>
-<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code></pre></div>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
-<p><img src="slides_pt4_files/figure-slidy/ggplot_smooth-1.png" width="768" /></p>
-<p><br />
-</p>
-<div class="tip">
-<p><code>geom_xxxx()</code> and <code>stat_xxxx()</code> are actually
-just wrappers for <code>layer()!</code></p>
+<div class="shaded-box li-single" style="width:20em; margin:0 auto;">
+<ol style="list-style-type: decimal">
+<li>basic scatterplots</li>
+<li>differentiating species by color</li>
+<li>side-by-side plots with facets</li>
+<li>box plots and histograms</li>
+</ol>
 </div>
 <p><br />
 </p>

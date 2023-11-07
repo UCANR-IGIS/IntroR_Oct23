@@ -1,15 +1,25 @@
 ---
-title: "Data Wrangling Pt 3: Time Series Data and Missing Values"
+title: "Data Wrangling 3: Time Series Data and Missing Values"
 output: 
   html_notebook:
     toc: yes
+    toc_depth: 2
     toc_float: yes
 ---
 
-## Load Packages 
+```{css echo = FALSE}
+h1,h2,h3 {font-weight:bold;}
+h1 {font-size:24px;}
+h2 {font-size:20px;}
+h3 {font-size:16px;}
+```
+\
+
+# Load Packages 
 
 ```{r chunk01}
 library(dplyr)
+library(tidyr)
 
 # Specify package preferences for filter, count, select, and arrange
 library(conflicted)
@@ -21,7 +31,9 @@ conflict_prefer("arrange", "dplyr", quiet = TRUE)
 
 \
 
-## Load some weather data from the CIMIS network
+# Import Weather Data
+
+First, we import some weather data from the CIMIS network that has been saved to a [Google Sheet](https://docs.google.com/spreadsheets/d/13FR4Mji24KqZmLqK_BiLKew8nN4MbCdh1KpzT54hH4M/) that can be viewed by anyone with the link.
 
 ```{r chunk02}
 library(googlesheets4)
@@ -49,11 +61,15 @@ arvinedison_tbl <- cimis_data(targets = 125, start.date = "2023-09-16", end.date
 
 \
 
-## CHALLENGE #1. Would you consider the CIMIS data to be long or wide? It is tidy?
+# CHALLENGE #1
+
+Would you consider the CIMIS data to be long or wide? 
+
+It is tidy?
 
 \
 
-## Create a date column
+# Create a date column
 
 ```{r chunk03}
 library(lubridate)
@@ -67,7 +83,7 @@ head(arvedsn_dt_tbl)
 
 \
 
-## Create a wide version of the table
+# Create a wide version of the table
 
 Guide to pivoting: <https://tidyr.tidyverse.org/articles/pivot.html>
 
@@ -82,16 +98,18 @@ head(arvedsn_wide_tbl)
 
 \
 
-## Fill in Missing Evapotranspiration Values
+# Deal with Missing Values
+
+The evapotranspiration column has some missing values. In this section, we'll look at a couple of different methods of filling them in. (For a real project, we'd want to consult someone who knows about evapotranspiration to decide which method is most appropriate for these data!)
 
 First, we create a data frame with just Eto:
 
 ```{r chunk05}
-arvedsn_et0_tbl <- arvedsn_dt_tbl |> 
+arvedsn_eto_tbl <- arvedsn_dt_tbl |> 
   filter(Item == "DayEto") |> 
   select(Station, Dt, Item, Value, Unit)
 
-head(arvedsn_et0_tbl)
+head(arvedsn_eto_tbl)
 ```
 
 \
@@ -99,27 +117,41 @@ head(arvedsn_et0_tbl)
 Are there missing values?
 
 ```{r chunk06}
-## View(arvedsn_et0_tbl)
+## View(arvedsn_eto_tbl)
 
-summary(arvedsn_et0_tbl)
+summary(arvedsn_eto_tbl)
 ```
 
 \
 
-## Fix #1. Replace missing values with the mean or median
+# Fix #1. Throw away incomplete rows
+
+`tidyr::drop_na()` will throw away rows that have `NA` values in *any* of the specified columns (default is check all columns):
+
+```{r chunk07}
+arvedsn_eto_fix1_tbl <- arvedsn_eto_tbl |> 
+  tidyr::drop_na()
+
+# View(arvedsn_eto_fix1_tbl)
+nrow(arvedsn_eto_tbl); nrow(arvedsn_eto_fix1_tbl)
+```
+
+\
+
+# Fix #2. Replace with the mean or median
 
 Step 1. Decide: mean or median?
 
-```{r chunk07}
-arvedsn_et0_tbl |> pull(Value) |> hist(breaks = 20)
+```{r chunk08}
+arvedsn_eto_tbl |> pull(Value) |> hist(breaks = 20)
 ```
 
 \
 
 Step 2. Compute the median
 
-```{r chunk08}
-value_median <- arvedsn_et0_tbl |> pull(Value) |> median(na.rm = TRUE)
+```{r chunk09}
+value_median <- arvedsn_eto_tbl |> pull(Value) |> median(na.rm = TRUE)
 value_median
 ```
 
@@ -127,36 +159,44 @@ value_median
 
 Step 3. Substitute the median whenever `Value` is NA.
 
-```{r chunk09}
-arvedsn_et0_fix1_tbl <- arvedsn_et0_tbl |> 
+```{r chunk10}
+arvedsn_eto_fix2_tbl <- arvedsn_eto_tbl |> 
   mutate(Value_Fix1 = if_else(is.na(Value), value_median, Value))
 
-# View(arvedsn_et0_fix1_tbl) 
+## You can also use tidyr::replace_na()
+## arvedsn_eto_fix2_tbl <- arvedsn_eto_tbl |> 
+##   replace_na(list(Value = value_median))
+
+# View(arvedsn_eto_fix2_tbl) 
 ```
 
 \
 
-## Fix #2. Interpolate missing values
+# Fix #3. Interpolate missing values
 
-```{r chunk10}
+To interpolate missing values, we'll create a vector with the replacement values (using the `zoo` package), and then tack it on to the data frame.
+
+First, create the replacement values:
+
+```{r chunk11}
 library(zoo)
-vals_linear_interpolation <- na.approx(arvedsn_et0_tbl$Value)
+vals_linear_interpolation <- na.approx(arvedsn_eto_tbl$Value)
 vals_linear_interpolation
 
 # You can also do spline interpolation
-# vals_spline_interpolation <- na.spline(arvedsn_et0_tbl$Value)
+# vals_spline_interpolation <- na.spline(arvedsn_eto_tbl$Value)
 # vals_spline_interpolation
 ```
 \
 
-Add the imputed values as a new column with `bind_cols`:
+Next, add the vector with imputed values as a new column with `bind_cols`:
 
-```{r chunk11}
-arvedsn_et0_fix2_tbl <- arvedsn_et0_fix1_tbl |> 
+```{r chunk12}
+arvedsn_eto_fix3_tbl <- arvedsn_eto_tbl |> 
   bind_cols(Value_Fix2 = vals_linear_interpolation)
 
-# View(arvedsn_et0_fix2_tbl)
-head(arvedsn_et0_fix2_tbl)
+# View(arvedsn_eto_fix3_tbl)
+head(arvedsn_eto_fix3_tbl)
 ```
 
 \
@@ -165,7 +205,9 @@ This is just scratching the surface of dealing with missing values!
 
 See also: [imputeTS](https://steffenmoritz.github.io/imputeTS/) 
 
-## CHALLENGE #2
+\
+
+# CHALLENGE #2
 
 There are also some missing values in the Maximum Daily Air Temperature (DayAirTmpMax). 
 
@@ -173,25 +215,23 @@ Decide what would be a reasonable method to deal with these, and implement it.
 
 \
 
-## Resampling data
+# Resampling data
 
 Bin the Eto values into low, medium, and high:
 
-```{r chunk12}
-arvedsn_et0_fix3_tbl <- arvedsn_et0_fix2_tbl |> 
+```{r chunk13}
+arvedsn_eto_fix3_tbl <- arvedsn_eto_fix2_tbl |> 
   mutate(eto_level = case_when(Value_Fix2 <= 0.14 ~ "low",
                                Value_Fix2 <= 0.19 ~ "medium",
                                TRUE ~ "high"))
 
-# View(arvedsn_et0_fix3_tbl)
-head(arvedsn_et0_fix3_tbl)
+# View(arvedsn_eto_fix3_tbl)
+head(arvedsn_eto_fix3_tbl)
 ```
 
 \
 
-# END!
+# End
 
-Save your work to render a HTML file
-
-
+Remember to save your work to render a HTML file.
 

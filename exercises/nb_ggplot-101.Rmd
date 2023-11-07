@@ -3,6 +3,7 @@ title: "ggplot 101"
 output: 
   html_notebook:
     toc: yes
+    toc_depth: 2
     toc_float: yes
 ---
 
@@ -143,6 +144,10 @@ Make a histogram of flipper length for each species. [[Hint](https://bit.ly/3pfm
 ```
 
 \
+
+# End
+
+Remember to save your work to render a HTML file.
 
 
 

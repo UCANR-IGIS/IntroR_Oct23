@@ -13,7 +13,7 @@
 
 <title>Intro to R workshop series</title>
 
-<script src="slides/lib/header-attrs-2.23/header-attrs.js"></script>
+<script src="slides/lib/header-attrs-2.25/header-attrs.js"></script>
 <script src="slides/lib/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="slides/lib/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -206,13 +206,20 @@ Cloud account, you’re done for now.</span><br/></li>
 <!---------------
 click [here](){target="_blank" rel="noopener"} to make a copy of the workshop project we'll be using for all sessions. ------------------->
 <ul>
-<li><a href="https://igis.ucanr.edu/Training/Learn-R/" target="_blank"
-rel="noopener">Reviewing R Basics</a><br/><span
+<li><p><a href="https://igis.ucanr.edu/Training/Learn-R/"
+target="_blank" rel="noopener">Reviewing R Basics</a><br/><span
 style="font-size:80%; font-style:italic;">The workshop series is
 designed for beginners, but if you’re new to R or a bit rusty, check out
 these <a href="https://igis.ucanr.edu/Training/Learn-R/" target="_blank"
 rel="noopener">suggested resources</a> to review the basics. It will pay
-off!</span></li>
+off!</span></p></li>
+<li><p><a href="./extras/workspace_tips.html" target="_blank"
+rel="noopener">Tips for Taking Software Workshops on Zoom</a><br/><span
+style="font-size:80%; font-style:italic;">If at all possible, taking the
+workshop on a computer with two screens is highly recommended, so you
+can work on RStudio on one screen while watching the slides and live
+demos on the other screen. If you’re limited to a single screen, this
+page has some tips that may help.</span></p></li>
 </ul>
 <p><br />
 </p>
@@ -234,16 +241,6 @@ target="_blank" rel="noopener">Homework 1</a> <a
 href="./homeworks/answers/hw01_answers.html" class="answers"
 target="_blank" rel="noopener">(Answers)</a></p></li>
 </ul>
-<!--------------------
-
-- Scripts:<br/><span class="note">Scripts are already included in the RStudio Cloud project.</span>
-
-<div style="margin-left:3em;">
-- Exercise 1: *no script*
-- Exercise 2: [ex02.R](https://raw.githubusercontent.com/ucanr-igis/IntroR_Oct22/main/ex02.R){target="_blank" rel="noopener"}
-</div>
-
---------------->
 <details style="cursor: pointer; color: rgb(51,122,183); margin-left:2em;">
 <summary>
 Recording
@@ -289,16 +286,13 @@ target="_blank" rel="noopener">Homework 2</a> <a
 href="./homeworks/answers/hw02_answers.html" class="answers"
 target="_blank" rel="noopener">(Answers)</a></li>
 </ul>
-<!-------------------
-
 <details style="cursor: pointer; color: rgb(51,122,183); margin-left:2em;">
-<summary>Recording</summary>
-    
-<iframe width="560" height="315" src="https://www.youtube.com/embed/4ls89MOVzeY?rel=0" title="YouTube video player" frameborder="1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="margin-left:1.5em; margin-top:1em;"></iframe>
-
+<summary>
+Recording
+</summary>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ZFNHkw9B4BQ?rel=0" title="YouTube video player" frameborder="1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="margin-left:1.5em; margin-top:1em;">
+</iframe>
 </details>
-
----------------->
 <p><br />
 </p>
 </div>
@@ -306,28 +300,18 @@ target="_blank" rel="noopener">(Answers)</a></li>
 <h1>Part III. Wrangling your Data Pt1</h1>
 <p><em>October 11, 2023. 10:00a - 12:00p PDT</em></p>
 <ul>
-<li><a href="./slides/slides_pt3.html" target="_blank"
-rel="noopener">Slides</a></li>
-</ul>
-<!-----------------------
-- Notebooks:<br/><span class="note">Notebooks are already included in the RStudio Cloud project.</span>
-
-<div style="margin-left:3em;">
-- Exercise 5: ex05.Rmd
-</div>
-
- --------------------->
-<ul>
-<li><p><a
-href="https://raw.githubusercontent.com/ucanr-igis/IntroR_Oct23/main/exercises/nb_datawrangling_02.Rmd"
-target="_blank" rel="noopener">Notebook 1</a> | <span
-style="font-size:80%;">(<a
+<li><p><a href="./slides/slides_pt3.html" target="_blank"
+rel="noopener">Slides</a></p></li>
+<li><p>Notebook exercise: <a
+href="https://raw.githubusercontent.com/ucanr-igis/IntroR_Oct23/main/exercises/nb_datawrangling_01.Rmd"
+target="_blank" rel="noopener">Data Wrangling 1: Importing Messy Data,
+Manipulating Columns and Rows</a> | <span style="font-size:80%;">(<a
 href="./exercises/nb_datawrangling_01.nb.html" target="_blank"
 rel="noopener">HTML</a>)</span></p></li>
-<li><p><a
+<li><p>Notebook exercise: <a
 href="https://raw.githubusercontent.com/ucanr-igis/IntroR_Oct23/main/exercises/nb_datawrangling_02.Rmd"
-target="_blank" rel="noopener">Notebook 2</a> | <span
-style="font-size:80%;">(<a
+target="_blank" rel="noopener">Data Wrangling 2: Table Summaries, Joins,
+&amp; Reshaping</a> | <span style="font-size:80%;">(<a
 href="./exercises/nb_datawrangling_02.nb.html" target="_blank"
 rel="noopener">HTML</a>)</span></p></li>
 <li><p><a
@@ -350,9 +334,29 @@ Recording
 <h1>Part IV. Data Wrangling Pt2 and ggplot</h1>
 <p><em>October 18, 2023. 10:00a - 12:00p PDT</em></p>
 <ul>
-<li><a href="./slides/slides_pt4.html" target="_blank"
-rel="noopener">Slides</a></li>
+<li><p><a href="./slides/slides_pt4.html" target="_blank"
+rel="noopener">Slides</a></p></li>
+<li><p>Notebook exercise: <a
+href="https://raw.githubusercontent.com/ucanr-igis/IntroR_Oct23/main/exercises/nb_datawrangling_03.Rmd"
+target="_blank" rel="noopener">Data Wrangling 3 (Times Series &amp;
+Missing Values)</a> | <span style="font-size:80%;">(<a
+href="./exercises/nb_datawrangling_03.nb.html" target="_blank"
+rel="noopener">HTML</a>)</span></p></li>
+<li><p>Notebook exercise: <a
+href="https://raw.githubusercontent.com/ucanr-igis/IntroR_Oct23/main/exercises/nb_ggplot-101.Rmd"
+target="_blank" rel="noopener">ggplot</a> | <span
+style="font-size:80%;">(<a href="./exercises/nb_ggplot-101.nb.html"
+target="_blank" rel="noopener">HTML</a>)</span></p></li>
 </ul>
+<details style="cursor: pointer; color: rgb(51,122,183); margin-left:2em;">
+<summary>
+Recording
+</summary>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/C-PSh_K1n7Q?rel=0" title="YouTube video player" frameborder="1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="margin-left:1.5em; margin-top:1em;">
+</iframe>
+</details>
+<p><br />
+</p>
 <br/>
 <hr/>
 <div>
