@@ -1,5 +1,5 @@
 ##############################################################
-## EXERCISE 4: Install a package, functions, piping syntax
+## EXERCISE 3: Install a package, functions, piping syntax
 #############################################################
 
 ## 1. View the `archbold.apple`  data frame from the agridat package
@@ -16,6 +16,11 @@ head(archbold.apple)
 
 # head(archbold.apple)
 # View(archbold.apple)
+
+## Read about this dataset
+
+# ?archbold.apple
+# help("archbold.apple")
 
 #################################################
 ## Function Practice
@@ -46,9 +51,9 @@ head(archbold.apple)
 
 # Rewrite the following as a piped expression
 
-x1 <- seq(from = 1, to = 7, length.out = 500)
-x2 <- round(x1, digits = 2) 
-x3 <- sum(x2)
+x1 = seq(from = 1, to = 7, length.out = 500)
+x2 = round(x1, digits = 2) 
+x3 = sum(x2)
 
 ## CHALLENGE: 
 

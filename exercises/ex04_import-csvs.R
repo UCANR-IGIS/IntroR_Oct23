@@ -41,7 +41,7 @@ plot(cars_df$speed, cars_df$breaking_dist, pch = 16)
 ## IMPORT ANOTHER CSV FROM A URL
 ####################################################
 
-animals_df <- read.csv("https://raw.githubusercontent.com/ucanr-igis/intror_oct23/main/data/animals.csv")
+animals_df <- read.csv("https://raw.githubusercontent.com/ucanr-igis/intror_oct23/main/exercises/data/animals.csv")
 
 ## Preview the data frame in a View window
 
